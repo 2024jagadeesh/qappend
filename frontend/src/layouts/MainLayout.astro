@@ -1,0 +1,42 @@
+---
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+}
+
+const {
+  title = 'QuickAppend'
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+
+    <meta
+      name="description"
+      content="QuickAppend"
+    />
+
+    <title>{title}</title>
+  </head>
+
+  <body>
+    <Header />
+
+    <main class="site-main">
+      <slot />
+    </main>
+
+    <Footer />
+  </body>
+</html>

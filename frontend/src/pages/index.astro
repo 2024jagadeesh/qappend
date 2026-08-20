@@ -1,0 +1,26 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+
+import { sanityClient } from '../lib/sanity';
+import { SITE_SETTINGS_QUERY } from '../lib/queries';
+
+const settings = await sanityClient.fetch(
+  SITE_SETTINGS_QUERY
+);
+
+console.log('SITE SETTINGS:', settings);
+---
+
+<MainLayout title={settings?.siteName ?? 'QuickAppend'}>
+
+  <section style="padding: 80px 6vw;">
+    <h1>
+      {settings?.siteName ?? 'QuickAppend'}
+    </h1>
+
+    <p>
+      CTA: {settings?.headerCtaText ?? 'Request Audit'}
+    </p>
+  </section>
+
+</MainLayout>

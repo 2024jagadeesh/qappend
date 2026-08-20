@@ -1,0 +1,139 @@
+/* ============ FOOTER ============ */
+
+footer {
+  background: color-mix(in srgb, var(--ink) 68%, #000);
+  color: var(--paper);
+  padding: 80px var(--pad-x) 30px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.ft-top {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 60px;
+  padding-bottom: 56px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ft-brand .logo-mark::after {
+  border-color: var(--ink);
+}
+
+.ft-brand p {
+  font-size: 14px;
+  color: color-mix(in srgb, var(--paper) 55%, transparent);
+  line-height: 1.65;
+  margin-top: 16px;
+  max-width: 280px;
+}
+
+.ft-col h5 {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--paper) 50%, transparent);
+  margin-bottom: 18px;
+}
+
+.ft-col ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ft-col a {
+  font-size: 14px;
+  color: color-mix(in srgb, var(--paper) 75%, transparent);
+  transition: color 0.15s;
+}
+
+.ft-col a:hover {
+  color: var(--hot);
+}
+
+.ft-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 28px;
+  font-size: 12px;
+  font-family: var(--f-mono);
+  color: color-mix(in srgb, var(--paper) 40%, transparent);
+}
+
+.ft-legal {
+  display: flex;
+  gap: 22px;
+}
+
+.ft-legal a {
+  color: color-mix(in srgb, var(--paper) 55%, transparent);
+  transition: color 0.15s;
+}
+
+.ft-legal a:hover {
+  color: var(--hot);
+}
+
+.ft-mark {
+  font-family: var(--f-display);
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  line-height: 0.85;
+  color: var(--paper);
+  padding: 60px 0 20px;
+  opacity: 0.97;
+  text-align: right;
+}
+
+.ft-mark em {
+  font-family: var(--f-serif);
+  font-style: italic;
+  color: var(--hot);
+  font-weight: 400;
+}
+
+/* Footer logo */
+.ft-brand .logo {
+  color: var(--paper) !important;
+}
+
+.ft-brand .logo:hover {
+  color: var(--paper) !important;
+}
+
+/* Footer logo text */
+.ft-brand .logo span:last-child {
+  color: var(--paper);
+}
+
+/* Footer logo mark */
+.ft-brand .logo-mark {
+  background: var(--hot);
+}
+
+.ft-brand .logo-mark::after {
+  border-color: var(--ink);
+}
+
+/* Footer links */
+.ft-col a {
+  color: color-mix(in srgb, var(--paper) 75%, transparent);
+}
+
+.ft-col a:hover {
+  color: var(--hot);
+}
+
+/* Legal links */
+.ft-legal a {
+  color: color-mix(in srgb, var(--paper) 55%, transparent);
+}
+
+.ft-legal a:hover {
+  color: var(--hot);
+}

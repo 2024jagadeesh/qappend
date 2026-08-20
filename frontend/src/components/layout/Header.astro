@@ -1,0 +1,112 @@
+---
+import '../../styles/components/header.css';
+import { sanityClient } from '../../lib/sanity';
+import { SITE_SETTINGS_QUERY } from '../../lib/queries';
+
+const settings = await sanityClient.fetch(
+  SITE_SETTINGS_QUERY
+);
+---
+
+<nav class="nav">
+
+  <!-- Logo -->
+  <a class="logo" href="/">
+    {settings?.logoUrl ? (
+      <img
+        src={settings.logoUrl}
+        alt={settings.siteName ?? 'QuickAppend'}
+      />
+    ) : (
+      <>
+        <span class="logo-mark"></span>
+        <span>{settings?.siteName ?? 'QuickAppend'}</span>
+      </>
+    )}
+  </a>
+
+  <!-- Navigation -->
+  <ul class="nav-links">
+
+    <li class="nav-item">
+      <button type="button" class="nav-trigger">
+        Services
+      </button>
+
+      <div class="nav-menu">
+        <div class="nav-menu-inner">
+          <a href="/services/">
+            Append
+            <small>Complete the record, field by field</small>
+          </a>
+
+          <a href="/enrichment/">
+            Enrichment
+            <small>Turn records into intelligence</small>
+          </a>
+        </div>
+      </div>
+    </li>
+
+    <li>
+      <a href="/process/">Process</a>
+    </li>
+
+    <li>
+      <a href="/use-cases/">Use Cases</a>
+    </li>
+
+    <li class="nav-item">
+      <button type="button" class="nav-trigger">
+        Company
+      </button>
+
+      <div class="nav-menu nav-menu--right">
+        <div class="nav-menu-inner">
+
+          <a href="/about/">
+            About
+            <small>Who we are</small>
+          </a>
+
+          <a href="/contact/">
+            Contact
+            <small>Talk to a specialist</small>
+          </a>
+
+          <a href="/case-studies/">
+            Case Studies
+            <small>Results in the field</small>
+          </a>
+
+          <a href="/blog/">
+            Blogs
+            <small>Guides &amp; insights</small>
+          </a>
+
+          <a href="/whitepapers/">
+            White Papers
+            <small>In-depth playbooks</small>
+          </a>
+
+          <a href="/faq/">
+            FAQ
+            <small>Common questions</small>
+          </a>
+
+        </div>
+      </div>
+    </li>
+
+  </ul>
+
+  <!-- CTA from Sanity -->
+  <button
+    class="nav-cta"
+    type="button"
+    data-open-modal
+  >
+    {settings?.headerCtaText ?? 'Request Audit'}
+  </button>
+
+</nav>

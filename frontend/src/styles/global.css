@@ -1,0 +1,92 @@
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@10..48,400;10..48,500;10..48,600;10..48,700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+:root {
+  --paper: #f4efe6;
+  --paper-2: #ece6d8;
+  --ink: #1e2521;
+  --ink-2: #2d342f;
+  --muted: #6d6a62;
+  --hot: #1f6b3d;
+  --hot-2: #154a29;
+  --cobalt: #c9a227;
+  --bone: #fbf8f0;
+  --line: rgba(14, 14, 16, 0.12);
+  --line-soft: rgba(14, 14, 16, 0.06);
+
+  --f-display: "Bricolage Grotesque", sans-serif;
+  --f-serif: "Instrument Serif", serif;
+  --f-body: "Space Grotesk", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --pad-x: 6vw;
+  --pad-y: 8rem;
+  --radius: 14px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+
+  font-family: var(--f-body);
+  background: var(--paper);
+  color: var(--ink);
+
+  overflow-x: hidden;
+
+  font-feature-settings: "ss01", "ss02", "cv11";
+
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--hot);
+  color: var(--bone);
+}
+
+main {
+  width: 100%;
+}
+
+.site-main {
+  padding-top: 76px;
+}
+
+@media (max-width: 700px) {
+  .site-main {
+    padding-top: 65px;
+  }
+}
