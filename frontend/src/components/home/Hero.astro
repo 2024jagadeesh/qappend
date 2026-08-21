@@ -1,0 +1,143 @@
+---
+import '../../styles/components/hero.css';
+
+interface Props {
+  data: any;
+}
+
+const { data } = Astro.props;
+
+const rotatingWords = data?.rotatingWords ?? [
+  'Completed.',
+  'Verified.',
+  'Validated.',
+  'Appended.',
+  'Enriched.',
+];
+---
+
+<section
+  class="hero"
+  data-screen-label="01 Hero"
+  data-rotating-words={JSON.stringify(rotatingWords)}
+>
+  <div class="hero-corners" aria-hidden="true">
+    <i></i>
+    <i></i>
+    <i></i>
+    <i></i>
+  </div>
+
+  <div class="hero-badge">
+    <span>
+      {data?.badge ?? 'Trusted by 1,400+ B2B revenue teams'}
+    </span>
+  </div>
+
+  <div class="hero-main">
+
+    <div class="hero-main-left">
+
+      <h1 class="h1">
+
+        <span class="line hero-line-main">
+  {data?.heading ?? 'B2B contact'}
+  <em>{data?.headingHighlight ?? 'records'}</em><span class="hero-dot">.</span>
+</span>
+
+        <span
+          class="line hero-cycle"
+          aria-label={rotatingWords.join(', ')}
+        >
+          <span class="cyc">
+            {rotatingWords[0]}
+          </span>
+        </span>
+
+      </h1>
+
+      <p class="lede">
+        {data?.description ??
+          'Get verified emails, direct dials, titles, and firmographics with AI-powered Data Appending, Enrichment, Profiling, and Cleansing services.'}
+      </p>
+
+      <div class="hero-actions">
+
+  <button
+    class="hero-cta hero-cta-primary"
+    type="button"
+    data-open-modal
+  >
+    {data?.primaryButton?.text ?? 'Request free audit'}
+    <span aria-hidden="true"> →</span>
+  </button>
+
+  <a
+    href={data?.secondaryButton?.link ?? '#demo'}
+    class="hero-cta hero-cta-secondary"
+  >
+    {data?.secondaryButton?.text ?? 'See live demo'}
+  </a>
+
+</div>
+
+      <p class="hero-fine">
+        {data?.finePrint ??
+          'Free 100-record sample · No contract · Results in 72 hours'}
+      </p>
+
+      <div class="hero-trust">
+
+        <span class="hero-trust-label">
+          {data?.trustLabel ?? 'Writes back into'}
+        </span>
+
+        <span class="hero-trust-list">
+          {
+            (data?.trustItems ?? [
+              'Salesforce',
+              'HubSpot',
+              'Marketo',
+              'Outreach',
+              'Snowflake',
+            ]).map((item: string) => (
+              <b>{item}</b>
+            ))
+          }
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<script>
+  const hero = document.querySelector('.hero');
+
+  if (hero) {
+    const word = hero.querySelector('.cyc');
+
+    const words = JSON.parse(
+      hero.getAttribute('data-rotating-words') || '[]'
+    );
+
+    if (word && words.length > 0) {
+      let index = 0;
+
+      word.classList.add('is-in');
+
+      setInterval(() => {
+        word.classList.remove('is-in');
+
+        setTimeout(() => {
+          index = (index + 1) % words.length;
+          word.textContent = words[index];
+          word.classList.add('is-in');
+        }, 500);
+      }, 2200);
+    }
+  }
+</script>

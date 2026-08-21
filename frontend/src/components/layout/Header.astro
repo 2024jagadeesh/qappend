@@ -3,9 +3,7 @@ import '../../styles/components/header.css';
 import { sanityClient } from '../../lib/sanity';
 import { SITE_SETTINGS_QUERY } from '../../lib/queries';
 
-const settings = await sanityClient.fetch(
-  SITE_SETTINGS_QUERY
-);
+const settings = await sanityClient.fetch(SITE_SETTINGS_QUERY);
 ---
 
 <nav class="nav">
@@ -25,39 +23,64 @@ const settings = await sanityClient.fetch(
     )}
   </a>
 
+
   <!-- Navigation -->
   <ul class="nav-links">
 
+    <!-- Services -->
     <li class="nav-item">
-      <button type="button" class="nav-trigger">
+
+      <button
+        type="button"
+        class="nav-trigger"
+        aria-haspopup="true"
+      >
         Services
       </button>
 
       <div class="nav-menu">
         <div class="nav-menu-inner">
+
           <a href="/services/">
-            Append
+            <span>Append</span>
             <small>Complete the record, field by field</small>
           </a>
 
           <a href="/enrichment/">
-            Enrichment
+            <span>Enrichment</span>
             <small>Turn records into intelligence</small>
           </a>
+
         </div>
       </div>
+
     </li>
 
+
+    <!-- Process -->
     <li>
-      <a href="/process/">Process</a>
+      <a href="/process/">
+        Process
+      </a>
     </li>
 
+
+    <!-- Use Cases -->
     <li>
-      <a href="/use-cases/">Use Cases</a>
+      <a href="/use-cases/">
+        Use Cases
+      </a>
     </li>
 
+
+    <!-- Company -->
     <li class="nav-item">
-      <button type="button" class="nav-trigger">
+
+      <button
+        type="button"
+        class="nav-trigger"
+        aria-haspopup="true"
+      >
         Company
       </button>
 
@@ -65,42 +88,44 @@ const settings = await sanityClient.fetch(
         <div class="nav-menu-inner">
 
           <a href="/about/">
-            About
+            <span>About</span>
             <small>Who we are</small>
           </a>
 
           <a href="/contact/">
-            Contact
+            <span>Contact</span>
             <small>Talk to a specialist</small>
           </a>
 
           <a href="/case-studies/">
-            Case Studies
+            <span>Case Studies</span>
             <small>Results in the field</small>
           </a>
 
           <a href="/blog/">
-            Blogs
+            <span>Blogs</span>
             <small>Guides &amp; insights</small>
           </a>
 
           <a href="/whitepapers/">
-            White Papers
+            <span>White Papers</span>
             <small>In-depth playbooks</small>
           </a>
 
           <a href="/faq/">
-            FAQ
+            <span>FAQ</span>
             <small>Common questions</small>
           </a>
 
         </div>
       </div>
+
     </li>
 
   </ul>
 
-  <!-- CTA from Sanity -->
+
+  <!-- CTA -->
   <button
     class="nav-cta"
     type="button"

@@ -1,0 +1,19 @@
+---
+import Hero from './home/Hero.astro';
+
+interface Props {
+  sections?: any[];
+}
+
+const { sections = [] } = Astro.props;
+---
+
+{
+  sections.map((section) => {
+    if (section._type === 'hero') {
+      return <Hero data={section} />;
+    }
+
+    return null;
+  })
+}

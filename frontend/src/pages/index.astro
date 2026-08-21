@@ -1,26 +1,22 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
+import PageSections from '../components/PageSections.astro';
 
 import { sanityClient } from '../lib/sanity';
-import { SITE_SETTINGS_QUERY } from '../lib/queries';
+import { PAGE_QUERY } from '../lib/queries';
 
-const settings = await sanityClient.fetch(
-  SITE_SETTINGS_QUERY
+const page = await sanityClient.fetch(
+  PAGE_QUERY,
+  { slug: 'home' }
 );
-
-console.log('SITE SETTINGS:', settings);
 ---
 
-<MainLayout title={settings?.siteName ?? 'QuickAppend'}>
+<MainLayout title={page?.title ?? 'QuickAppend'}>
 
-  <section style="padding: 80px 6vw;">
-    <h1>
-      {settings?.siteName ?? 'QuickAppend'}
-    </h1>
-
-    <p>
-      CTA: {settings?.headerCtaText ?? 'Request Audit'}
-    </p>
-  </section>
+  {page ? (
+    <PageSections sections={page.sections} />
+  ) : (
+    <h1>Page not found</h1>
+  )}
 
 </MainLayout>
