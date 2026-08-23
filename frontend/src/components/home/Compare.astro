@@ -1,0 +1,393 @@
+---
+import '../../styles/components/compare.css';
+
+interface Props {
+  data: any;
+}
+
+const { data } = Astro.props;
+---
+
+<section class="compare" data-screen-label="05 Compare">
+
+  <div class="compare-hd">
+
+    <div>
+      <div class="tag">
+        {data?.tag}
+      </div>
+
+      <h2 class="h2">
+        {data?.heading}
+        <em>{data?.headingHighlight}</em>
+        {data?.headingSuffix}
+      </h2>
+    </div>
+
+    <p class="lede">
+      {data?.description}
+    </p>
+
+  </div>
+
+
+  <div class="cmp-layout">
+
+    <!-- LEFT ANIMATION -->
+    <aside class="cmp-anim" aria-hidden="true">
+
+      <div class="cmp-machine">
+
+        <svg
+          viewBox="0 0 240 560"
+          role="img"
+          aria-label="Data processing animation"
+        >
+
+          <g id="cmpGearBig">
+            <circle
+              cx="92"
+              cy="98"
+              r="56"
+              style="fill:none;stroke:var(--hot);stroke-width:24;stroke-dasharray:11 13.2"
+            ></circle>
+
+            <circle
+              cx="92"
+              cy="98"
+              r="37"
+              style="fill:var(--ink)"
+            ></circle>
+
+            <g style="stroke:rgba(251,248,240,.28);stroke-width:3">
+              <line x1="92" y1="70" x2="92" y2="126"></line>
+              <line x1="64" y1="98" x2="120" y2="98"></line>
+              <line x1="72" y1="78" x2="112" y2="118"></line>
+              <line x1="112" y1="78" x2="72" y2="118"></line>
+            </g>
+
+            <circle
+              cx="92"
+              cy="98"
+              r="9"
+              style="fill:var(--bone)"
+            ></circle>
+          </g>
+
+
+          <g id="cmpGearSmall">
+
+            <circle
+              cx="184"
+              cy="170"
+              r="34"
+              style="fill:none;stroke:var(--ink);stroke-width:16;stroke-dasharray:8 10.4"
+            ></circle>
+
+            <circle
+              cx="184"
+              cy="170"
+              r="21"
+              style="fill:var(--hot)"
+            ></circle>
+
+            <circle
+              cx="184"
+              cy="170"
+              r="6"
+              style="fill:var(--bone)"
+            ></circle>
+
+          </g>
+
+
+          <rect
+            x="24"
+            y="250"
+            width="192"
+            height="290"
+            rx="14"
+            style="fill:var(--paper);stroke:var(--line)"
+          ></rect>
+
+
+          <clipPath id="cmpClip">
+            <rect
+              x="33"
+              y="259"
+              width="174"
+              height="272"
+              rx="8"
+            ></rect>
+          </clipPath>
+
+
+          <g clip-path="url(#cmpClip)">
+            <g
+              id="cmpStream"
+              style="font-family:var(--f-mono);font-size:15px;font-weight:500;fill:var(--ink)"
+            ></g>
+          </g>
+
+        </svg>
+
+
+        <div class="cmp-machine-readout">
+          <span class="cmp-machine-dot"></span>
+          Processing
+        </div>
+
+      </div>
+
+    </aside>
+
+
+    <!-- ACCORDION -->
+    <div class="cmp-acc">
+
+      {
+        data?.services?.map((service: any) => (
+          <div
+            class={`cmp-acc-item ${service.style ?? 'olive'} ${service.open ? 'open' : ''}`}
+          >
+
+            <button
+              class="cmp-acc-head"
+              aria-expanded={service.open ? 'true' : 'false'}
+              type="button"
+            >
+
+              <span class="cmp-acc-name">
+                {service.name}
+              </span>
+
+              <span class="cmp-acc-sum">
+                {service.summary}
+              </span>
+
+              <span
+                class="cmp-acc-chev"
+                aria-hidden="true"
+              ></span>
+
+            </button>
+
+
+            <div class="cmp-acc-body">
+
+              <div class="cmp-acc-bodyinner">
+
+                <div class="cmp-acc-grid">
+
+                  {
+                    service.aspects?.map((aspect: any) => (
+                      <div class="cmp-aspect">
+
+                        <span class="cmp-k">
+                          {aspect.label}
+                        </span>
+
+                        <span class="cmp-v">
+                          {aspect.value}
+                        </span>
+
+                      </div>
+                    ))
+                  }
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+        ))
+      }
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<script>
+  (() => {
+    const root = document.querySelector('.compare');
+
+    if (!root) return;
+
+    /* ==========================
+       ACCORDION
+    ========================== */
+
+    root
+      .querySelectorAll<HTMLButtonElement>('.cmp-acc-head')
+      .forEach((button) => {
+
+        button.addEventListener('click', () => {
+
+          const item = button.closest('.cmp-acc-item');
+
+          if (!item) return;
+
+          const open = item.classList.toggle('open');
+
+          button.setAttribute(
+            'aria-expanded',
+            String(open)
+          );
+
+        });
+
+      });
+
+
+    /* ==========================
+       DATA MACHINE
+    ========================== */
+
+    const section = root;
+
+    const big = root.querySelector<SVGGElement>('#cmpGearBig');
+
+    const small = root.querySelector<SVGGElement>('#cmpGearSmall');
+
+    const stream = root.querySelector<SVGGElement>('#cmpStream');
+
+    const SVGNS = 'http://www.w3.org/2000/svg';
+
+    const words = [
+      'Appending',
+      'Cleansing',
+      'De-Duplication',
+      'Enrichment',
+      'Filtering',
+      'Profiling',
+      'Segmentation',
+      'Quality',
+      'Accuracy'
+    ];
+
+    const rowH = 36;
+    const y0 = 256;
+    const cycle = words.length * rowH;
+
+
+    if (stream) {
+
+      for (let i = 0; i < words.length * 2; i++) {
+
+        const y = y0 + i * rowH;
+
+        const group =
+          document.createElementNS(SVGNS, 'g');
+
+        const rect =
+          document.createElementNS(SVGNS, 'rect');
+
+        rect.setAttribute('x', '46');
+        rect.setAttribute('y', String(y));
+        rect.setAttribute('width', '16');
+        rect.setAttribute('height', '16');
+        rect.setAttribute('rx', '3');
+
+        rect.setAttribute(
+          'fill',
+          i % 2
+            ? '#1f6b3d'
+            : '#d4a82c'
+        );
+
+
+        const text =
+          document.createElementNS(SVGNS, 'text');
+
+        text.setAttribute('x', '72');
+        text.setAttribute('y', String(y + 13));
+
+        text.textContent =
+          words[i % words.length];
+
+
+        group.appendChild(rect);
+        group.appendChild(text);
+
+        stream.appendChild(group);
+      }
+
+    }
+
+
+    let ticking = false;
+
+
+    function frame() {
+
+      ticking = false;
+
+      const rect =
+        section.getBoundingClientRect();
+
+      const vh =
+        window.innerHeight ||
+        document.documentElement.clientHeight;
+
+      let progress =
+        (vh - rect.top) /
+        (rect.height + vh);
+
+      progress =
+        Math.max(
+          0,
+          Math.min(1, progress)
+        );
+
+
+      if (big) {
+        big.style.transform =
+          `rotate(${progress * 900}deg)`;
+      }
+
+      if (small) {
+        small.style.transform =
+          `rotate(${-progress * 1320}deg)`;
+      }
+
+      if (stream) {
+        stream.style.transform =
+          `translateY(${-((progress * 2800) % cycle)}px)`;
+      }
+
+    }
+
+
+    function requestFrame() {
+
+      if (!ticking) {
+
+        ticking = true;
+
+        requestAnimationFrame(frame);
+
+      }
+
+    }
+
+
+    window.addEventListener(
+      'scroll',
+      requestFrame,
+      { passive: true }
+    );
+
+    window.addEventListener(
+      'resize',
+      frame
+    );
+
+    frame();
+
+  })();
+</script>

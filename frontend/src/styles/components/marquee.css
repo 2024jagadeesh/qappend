@@ -1,0 +1,69 @@
+/* ============ MARQUEE / LOGO BAR ============ */
+
+.marquee {
+  background: var(--paper-2);
+
+  padding: 28px 0;
+
+  overflow: hidden;
+
+  border-top: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.marquee-track {
+  display: flex;
+
+  gap: 56px;
+
+  align-items: center;
+
+  animation: scroll 40s linear infinite;
+
+  width: max-content;
+}
+
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-item {
+  font-family: var(--f-display);
+
+  font-size: 22px;
+
+  font-weight: 600;
+
+  letter-spacing: -0.02em;
+
+  color: var(--ink);
+
+  opacity: 0.55;
+
+  white-space: nowrap;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+.marquee-item::before {
+  content: "";
+
+  width: 6px;
+  height: 6px;
+
+  background: var(--ink);
+
+  border-radius: 50%;
+
+  opacity: 0.4;
+}

@@ -1,0 +1,47 @@
+/* ============ STAT BAND ============ */
+.statband {
+  background: #101a33;
+  background-image: radial-gradient(
+    120% 140% at 100% 0%,
+    color-mix(in srgb, var(--hot) 45%, transparent) 0%,
+    transparent 55%
+  );
+  padding: 88px 5vw;
+}
+.statband-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 48px;
+}
+.statband-item {
+  text-align: center;
+  padding: 0 20px;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+}
+.statband-item:last-child {
+  border-right: none;
+}
+.statband-num {
+  font-family: var(--f-display);
+  font-size: 84px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  color: var(--paper);
+}
+.statband-num em {
+  font-family: var(--f-serif);
+  font-style: italic;
+  color: var(--hot);
+  font-weight: 400;
+}
+.statband-label {
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 16px;
+  font-family: var(--f-mono);
+  text-transform: uppercase;
+}

@@ -1,0 +1,107 @@
+---
+import '../../styles/components/intro.css';
+
+interface Props {
+  data: any;
+}
+
+const { data } = Astro.props;
+
+const challenges = data?.challenges ?? [];
+---
+
+<section class="intro" data-screen-label="02 Intro">
+
+  <div class="intro-grid">
+
+    <!-- LEFT CONTENT -->
+    <div>
+
+      {data?.tag && (
+        <div class="tag">
+          {data.tag}
+        </div>
+      )}
+
+      <h2 class="h2" id="pain-heading">
+  {data.heading}
+
+  {data.headingHighlight && (
+    <>
+      {' '}
+      <em>{data.headingHighlight}</em>
+    </>
+  )}
+
+  {data.headingEnd && (
+    <>
+      {' '}
+      {data.headingEnd}
+    </>
+  )}
+</h2>
+
+      {data?.description && (
+        <p class="lede intro-description">
+          {data.description}
+        </p>
+      )}
+
+      {data?.buttonText && (
+        <div class="intro-action">
+          <a
+            href={data?.buttonLink || '#'}
+            class="btn btn-primary"
+            data-open-modal
+          >
+            {data.buttonText}
+          </a>
+        </div>
+      )}
+
+    </div>
+
+
+    <!-- RIGHT CONTENT -->
+    <div class="intro-aside">
+
+      {data?.symptomsLabel && (
+        <div class="intro-symptoms">
+          {data.symptomsLabel}
+        </div>
+      )}
+
+      <div class="challenges">
+
+        {challenges.map((challenge: any) => (
+
+          <div
+            class="challenge"
+            style={`--ch: ${challenge.color || 'var(--hot)'}`}
+          >
+
+            <span class="num">
+              {challenge.number}
+            </span>
+
+            <span class="name">
+              {challenge.name}
+            </span>
+
+            {challenge.badge && (
+              <span class="badge">
+                {challenge.badge}
+              </span>
+            )}
+
+          </div>
+
+        ))}
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>

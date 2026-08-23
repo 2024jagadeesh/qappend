@@ -1,0 +1,54 @@
+---
+import '../../styles/components/also-offered.css';
+
+interface Props {
+  data: any;
+}
+
+const { data } = Astro.props;
+
+const items = data?.items ?? [];
+---
+
+<section class="also-strip" data-screen-label="06 Also offered">
+  <div class="also">
+
+    <div class="also-label">
+      {data?.label || 'Also offered'}
+    </div>
+
+    <div class="also-grid">
+
+      {items.map((item: any) => (
+        <div
+          class:list={[
+            'also-card',
+            item?.style === 'gold' && 'gold'
+          ]}
+        >
+          <div class="also-head">
+
+            <h4>
+              {item?.title}
+            </h4>
+
+            <span class="also-k">
+              {item?.category}
+            </span>
+
+          </div>
+
+          <a
+            class="also-link"
+            href={item?.link || '/contact/'}
+          >
+            {item?.buttonText || 'Talk to a specialist'}
+          </a>
+
+        </div>
+      ))}
+
+    </div>
+
+  </div>
+</section>

@@ -1,0 +1,124 @@
+/* ============ INTRO / ABOUT ============ */
+
+.intro {
+  background: #e6e6e2;
+  padding-top: calc(var(--pad-y) * 0.55);
+  padding-bottom: calc(var(--pad-y) * 0.35);
+}
+
+.intro-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+
+.intro-aside {
+  padding-top: 20px;
+}
+
+.intro-symptoms {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.intro-description {
+  margin-top: 28px;
+}
+
+.intro-action {
+  margin-top: 32px;
+}
+
+.challenges {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  margin-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.challenge {
+  display: grid;
+  grid-template-columns: 60px 1fr auto;
+  align-items: center;
+  gap: 16px;
+
+  padding: 18px 0;
+
+  border-bottom: 1px solid var(--line-soft);
+  border-left: 3px solid var(--ch, var(--hot));
+  padding-left: 14px;
+
+  transition:
+    background 0.2s,
+    padding 0.2s;
+}
+
+.challenge:hover {
+  background: color-mix(in srgb, var(--ch, var(--hot)) 8%, transparent);
+
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.challenge .num {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ch, var(--muted));
+}
+
+.challenge .name {
+  font-family: var(--f-display);
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.challenge .badge {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: #fff;
+  background: var(--ch, var(--hot));
+
+  padding: 4px 10px;
+
+  border-radius: 999px;
+
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ============ RESPONSIVE ============ */
+
+@media (max-width: 1100px) {
+  .intro-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+@media (max-width: 700px) {
+  .intro {
+    padding-top: calc(var(--pad-y) * 0.55);
+    padding-bottom: calc(var(--pad-y) * 0.35);
+  }
+
+  .challenge {
+    grid-template-columns: 45px 1fr;
+    gap: 12px;
+  }
+
+  .challenge .badge {
+    grid-column: 2;
+    width: fit-content;
+  }
+
+  .challenge .name {
+    font-size: 16px;
+  }
+}

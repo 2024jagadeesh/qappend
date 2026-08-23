@@ -1,5 +1,15 @@
 ---
 import Hero from './home/Hero.astro';
+import Stats from './home/Stats.astro';
+import Marquee from './home/Marquee.astro';
+import Intro from './home/Intro.astro';
+import VideoBand from './home/VideoBand.astro';
+import AppendingEnrichment from './home/AppendingEnrichment.astro';
+import Compare from './home/Compare.astro'
+import AlsoOffered from './home/AlsoOffered.astro';
+import Why from './home/Why.astro';
+import Testimonials from './home/Testimonials.astro'
+import FinalCta from './home/FinalCta.astro'
 
 interface Props {
   sections?: any[];
@@ -10,9 +20,51 @@ const { sections = [] } = Astro.props;
 
 {
   sections.map((section) => {
+
     if (section._type === 'hero') {
       return <Hero data={section} />;
     }
+
+    if (section._type === 'stats') {
+      return <Stats data={section} />;
+    }
+
+    if (section._type === 'marquee') {
+      return <Marquee data={section} />;
+    }
+
+    if (section._type === 'intro') {
+      return <Intro data={section} />;
+    }
+
+    if (section._type === 'videoBand') {
+      return <VideoBand data={section} />;
+    }
+
+    if (section._type === 'appendingEnrichment') {
+      return <AppendingEnrichment data={section} />;
+    }
+
+    if (section._type === 'compare') {
+      return <Compare data={section} />;
+    }
+
+    if (section._type === 'alsoOffered') {
+      return <AlsoOffered data={section} />;
+    }
+
+    if (section._type === 'why') {
+      return <Why data={section} />;
+    }
+
+    if (section._type === 'testimonials') {
+      return <Testimonials data={section} />;
+    }
+
+    if (section._type === 'finalCta') {
+      return <FinalCta data={section} />;
+    }
+
 
     return null;
   })

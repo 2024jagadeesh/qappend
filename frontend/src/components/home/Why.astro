@@ -1,0 +1,62 @@
+---
+import '../../styles/components/why.css';
+
+interface Props {
+  data: any;
+}
+
+const { data } = Astro.props;
+---
+
+<section class="why" data-screen-label="08 Why">
+
+  <div class="why-hd">
+    <div>
+
+      <div class="tag">
+        {data?.tag}
+      </div>
+
+      <h2 class="h2">
+        {data?.heading}
+        {data?.headingHighlight && (
+          <em>{data.headingHighlight}</em>
+        )}
+      </h2>
+
+    </div>
+
+    <p class="lede">
+      {data?.description}
+    </p>
+  </div>
+
+
+  <div class="why-grid why-grid-4">
+
+    {
+      data?.items?.map((item: any) => (
+        <div
+          class="why-item color"
+          style={`--wc:${item?.color || 'var(--hot)'}`}
+        >
+
+          <div class="why-num">
+            {item?.number}
+          </div>
+
+          <h4>
+            {item?.title}
+          </h4>
+
+          <p>
+            {item?.description}
+          </p>
+
+        </div>
+      ))
+    }
+
+  </div>
+
+</section>

@@ -1,0 +1,335 @@
+/* =========================================================
+   WHY QUICKAPPEND
+   ========================================================= */
+
+.why {
+  background: var(--paper-2);
+  padding-top: clamp(40px, 5vw, 72px);
+  padding-bottom: clamp(56px, 7vw, 96px);
+}
+
+/* ---------------------------------------------------------
+   HEADER
+   --------------------------------------------------------- */
+
+.why-hd {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 80px;
+  align-items: end;
+  margin-bottom: 56px;
+}
+
+.why-hd .lede {
+  margin: 0;
+}
+
+/* ---------------------------------------------------------
+   GRID
+   --------------------------------------------------------- */
+
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.why-grid.why-grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* ---------------------------------------------------------
+   CARD
+   --------------------------------------------------------- */
+
+.why-item {
+  background: var(--bone);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  padding: 28px;
+
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  min-height: 220px;
+
+  transform-origin: center;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.26s cubic-bezier(0.22, 0.61, 0.36, 1),
+    box-shadow 0.26s ease;
+}
+
+/* Four-column version */
+
+.why-grid.why-grid-4 .why-item {
+  padding: 22px;
+  gap: 10px;
+}
+
+.why-grid.why-grid-4 .why-item p {
+  margin-top: 8px;
+}
+
+/* Hover */
+
+.why-item:hover {
+  transform: scale(1.09);
+  z-index: 5;
+
+  box-shadow: 0 28px 56px -22px rgba(14, 14, 16, 0.45);
+
+  background: var(--paper);
+}
+
+/* ---------------------------------------------------------
+   NUMBER
+   --------------------------------------------------------- */
+
+.why-item .why-num {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--hot);
+  letter-spacing: 0.06em;
+}
+
+/* ---------------------------------------------------------
+   TITLE
+   --------------------------------------------------------- */
+
+.why-item h4 {
+  font-family: var(--f-display);
+  font-size: 20px;
+  font-weight: 600;
+
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+
+  color: var(--ink);
+}
+
+/* ---------------------------------------------------------
+   DESCRIPTION
+   --------------------------------------------------------- */
+
+.why-item p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.55;
+
+  margin-top: auto;
+}
+
+/* =========================================================
+   COLOR VARIANT
+   ========================================================= */
+
+.why-item.color {
+  background: var(--wc, var(--hot));
+  border-color: transparent;
+}
+
+.why-item.color:hover {
+  background: var(--wc, var(--hot));
+  border-color: transparent;
+
+  box-shadow: 0 28px 60px -20px
+    color-mix(in srgb, var(--wc, var(--hot)) 60%, black);
+}
+
+.why-item.color .why-num {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.why-item.color h4 {
+  color: #fff;
+}
+
+.why-item.color p {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* =========================================================
+   LEGACY VARIANTS
+   ========================================================= */
+
+.why-item.green {
+  background: #154a29;
+  border-color: transparent;
+}
+
+.why-item.green:hover {
+  background: #18532e;
+  border-color: transparent;
+}
+
+.why-item.green .why-num {
+  color: #d4a82c;
+}
+
+.why-item.green h4 {
+  color: #fffdf6;
+}
+
+.why-item.green p {
+  color: color-mix(in srgb, #fffdf6 78%, transparent);
+}
+
+/* --------------------------------------------------------- */
+
+.why-item.yellow {
+  background: #d4a82c;
+  border-color: transparent;
+}
+
+.why-item.yellow:hover {
+  background: #cda027;
+  border-color: transparent;
+}
+
+.why-item.yellow .why-num {
+  color: #fffdf6;
+}
+
+.why-item.yellow h4 {
+  color: #fffdf6;
+}
+
+.why-item.yellow p {
+  color: color-mix(in srgb, #fffdf6 86%, transparent);
+}
+
+/* --------------------------------------------------------- */
+
+.why-item.dark {
+  background: var(--ink);
+  border-color: transparent;
+}
+
+.why-item.dark:hover {
+  background: color-mix(in srgb, var(--ink) 92%, #fff);
+
+  border-color: transparent;
+}
+
+.why-item.dark .why-num {
+  color: #d4a82c;
+}
+
+.why-item.dark h4 {
+  color: #fffdf6;
+}
+
+.why-item.dark p {
+  color: color-mix(in srgb, #fffdf6 72%, transparent);
+}
+
+/* --------------------------------------------------------- */
+
+.why-item.white {
+  background: #ffffff;
+  border-color: var(--line);
+}
+
+.why-item.white:hover {
+  background: #ffffff;
+  border-color: var(--ink);
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
+  .why-hd {
+    grid-template-columns: 1fr 0.85fr;
+    gap: 48px;
+  }
+
+  .why-grid.why-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .why-item {
+    min-height: 210px;
+  }
+
+  .why-item:hover {
+    transform: scale(1.035);
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 760px) {
+  .why {
+    padding-top: 48px;
+    padding-bottom: 64px;
+  }
+
+  .why-hd {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    margin-bottom: 32px;
+  }
+
+  .why-grid,
+  .why-grid.why-grid-4 {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .why-grid.why-grid-4 .why-item {
+    padding: 24px;
+  }
+
+  .why-item {
+    min-height: 190px;
+    padding: 24px;
+  }
+
+  /*
+   * Avoid large scaling on mobile because it can
+   * create horizontal overflow.
+   */
+  .why-item:hover {
+    transform: translateY(-4px);
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+  .why {
+    padding-top: 40px;
+    padding-bottom: 52px;
+  }
+
+  .why-hd {
+    margin-bottom: 26px;
+  }
+
+  .why-item,
+  .why-grid.why-grid-4 .why-item {
+    padding: 22px;
+    min-height: 180px;
+  }
+
+  .why-item h4 {
+    font-size: 19px;
+  }
+
+  .why-item p {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+}

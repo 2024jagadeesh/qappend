@@ -32,6 +32,36 @@ export const pageType = defineType({
         {
           type: 'hero',
         },
+        {
+          type: 'stats',
+        },
+        {
+          type: 'marquee',
+        },
+        {
+          type: 'intro',
+        },
+        {
+          type: 'videoBand',
+        },
+        {
+          type: 'appendingEnrichment',
+        },
+        {
+          type: 'alsoOffered',
+        },
+        {
+          type: 'compare',
+        },
+        {
+          type: 'why',
+        },
+        {
+          type: 'testimonials',
+        },
+        {
+          type: 'finalCta',
+        },
       ],
     }),
   ],

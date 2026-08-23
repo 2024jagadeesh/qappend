@@ -1,0 +1,90 @@
+---
+import '../../styles/components/testimonials.css';
+
+interface Props {
+  data: any;
+}
+
+const { data } = Astro.props;
+---
+
+<section class="testi" data-screen-label="09 Testimonials">
+
+  <div class="testi-hd">
+    <div>
+
+      <div class="tag">
+        {data?.tag}
+      </div>
+
+      <h2 class="h2">
+        {data?.heading}
+        {data?.headingHighlight && (
+          <em>{data.headingHighlight}</em>
+        )}
+      </h2>
+
+    </div>
+  </div>
+
+
+  <div class="testi-grid">
+
+    {
+      data?.items?.map((item: any) => (
+        <div class:list={['testi-card', { featured: item?.featured }]}>
+
+          {item?.stat && (
+            <div class="testi-stat">
+              {item.stat}
+              <span class="testi-stat-arrow">→</span>
+            </div>
+          )}
+
+          <div class="quote">
+            "{item?.quote}"
+          </div>
+
+          {item?.imageUrl && (
+            <img
+              src={item.imageUrl}
+              alt={item?.author || 'Client testimonial'}
+              class="testi-img"
+              loading="lazy"
+            />
+          )}
+
+          <div class="testi-meta">
+
+            <div>
+              <div class="testi-author">
+                {item?.author}
+              </div>
+
+              <div class="testi-role">
+                {item?.role}
+              </div>
+            </div>
+
+            <div class="testi-num">
+              {item?.number}
+            </div>
+
+          </div>
+
+          {item?.caseStudyLink && (
+            <a
+              href={item.caseStudyLink}
+              class="btn btn-ghost testi-cta"
+            >
+              {item?.caseStudyText || 'Read case study'}
+            </a>
+          )}
+
+        </div>
+      ))
+    }
+
+  </div>
+
+</section>

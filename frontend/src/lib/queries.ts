@@ -15,10 +15,12 @@ export const PAGE_QUERY = `
     _id,
     title,
     slug,
+
     sections[]{
       _type,
 
       ...select(
+
         _type == "hero" => {
           badge,
           heading,
@@ -39,7 +41,145 @@ export const PAGE_QUERY = `
           finePrint,
           trustLabel,
           trustItems
+        },
+
+        _type == "stats" => {
+          items[]{
+            _key,
+            value,
+            suffix,
+            label
+          }
+        },
+
+        _type == "marquee" => {
+          items
+        },
+
+        _type == "intro" => {
+          tag,
+          heading,
+          headingHighlight,
+          headingEnd,
+          description,
+          buttonText,
+          buttonLink,
+          symptomsLabel,
+
+          challenges[]{
+            _key,
+            number,
+            name,
+            badge,
+            color
+          }
+        },
+
+        _type == "videoBand" => {
+          tag,
+          heading,
+          headingHighlight,
+          headingEnd,
+          description,
+          "videoUrl": video.asset->url
+        },
+
+        _type == "appendingEnrichment" => {
+          appendingTag,
+          appendingHeading,
+          appendingHighlight,
+          appendingButtonText,
+          appendingButtonLink,
+
+          enrichmentTag,
+          enrichmentHeading,
+          enrichmentHighlight,
+          enrichmentButtonText,
+          enrichmentButtonLink
+        },
+
+        _type == "compare" => {
+          tag,
+          heading,
+          headingHighlight,
+          headingSuffix,
+          description,
+
+          services[]{
+            _key,
+            name,
+            summary,
+            style,
+            open,
+
+            aspects[]{
+              _key,
+              label,
+              value
+            }
+          }
+        },
+
+        _type == "alsoOffered" => {
+          label,
+          items[]{
+            _key,
+            title,
+            category,
+            buttonText,
+            link,
+            style
+          }
+        },
+
+        _type == "why" => {
+          tag,
+          heading,
+          headingHighlight,
+          description,
+          items[]{
+            _key,
+            number,
+            title,
+            description,
+            color
+          }
+        },
+
+        _type == "testimonials" => {
+          tag,
+          heading,
+          headingHighlight,
+
+          items[]{
+            _key,
+            stat,
+            quote,
+            author,
+            role,
+            number,
+            featured,
+
+            caseStudyText,
+            caseStudyLink,
+
+            "imageUrl": image.asset->url
+          }
+        },
+
+        _type == "finalCta" => {
+          heading,
+          headingHighlight,
+          description,
+
+          buttons[]{
+            _key,
+            text,
+            link,
+            style
+          }
         }
+
       )
     }
   }

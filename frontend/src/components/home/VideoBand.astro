@@ -1,0 +1,71 @@
+---
+import '../../styles/components/videoband.css';
+
+interface Props {
+  data?: any;
+}
+
+const { data = {} } = Astro.props;
+---
+
+<section class="videoband" data-screen-label="02b Video">
+
+  <div class="videoband-inner">
+
+    <!-- LEFT CONTENT -->
+    <div class="videoband-text">
+
+      <div class="tag">
+        {data?.tag || 'Watch'}
+      </div>
+
+      <h2 class="h2">
+        {data?.heading || 'See what'}
+        {data?.headingHighlight && (
+          <>
+            {' '}
+            <em>{data.headingHighlight}</em>
+          </>
+        )}
+        {data?.headingEnd || ' does in 50 seconds.'}
+      </h2>
+
+      {data?.description && (
+        <p class="lede videoband-description">
+          {data.description}
+        </p>
+      )}
+
+    </div>
+
+
+    <!-- VIDEO -->
+    <div class="videoframe">
+
+  {data?.videoUrl ? (
+    <video
+      class="video-el"
+      controls
+      preload="metadata"
+      playsinline
+    >
+      <source
+        src={data.videoUrl}
+        type="video/mp4"
+      />
+    </video>
+  ) : (
+    <div class="video-ph">
+      <span class="video-play" aria-hidden="true">▶</span>
+
+      <span>
+        Explainer video coming soon
+      </span>
+    </div>
+  )}
+
+</div>
+
+  </div>
+
+</section>

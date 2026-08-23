@@ -1,0 +1,32 @@
+---
+import '../../styles/components/stats.css';
+
+interface Props {
+  data: any;
+}
+
+const { data } = Astro.props;
+---
+
+<section class="statband" data-screen-label="01b Stats">
+
+  <div class="statband-inner">
+
+    {data?.items?.map((item: any) => (
+      <div class="statband-item">
+
+        <div class="statband-num">
+          {item.value}
+          {item.suffix && <em>{item.suffix}</em>}
+        </div>
+
+        <div class="statband-label">
+          {item.label}
+        </div>
+
+      </div>
+    ))}
+
+  </div>
+
+</section>

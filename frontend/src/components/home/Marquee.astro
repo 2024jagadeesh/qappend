@@ -1,0 +1,25 @@
+---
+import '../../styles/components/marquee.css';
+
+interface Props {
+  data: any;
+}
+
+const { data } = Astro.props;
+
+const items = data?.items ?? [];
+---
+
+<section class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+
+    {items.map((item: string) => (
+      <span class="marquee-item">{item}</span>
+    ))}
+
+    {items.map((item: string) => (
+      <span class="marquee-item">{item}</span>
+    ))}
+
+  </div>
+</section>

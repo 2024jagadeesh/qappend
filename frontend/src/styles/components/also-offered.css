@@ -1,0 +1,167 @@
+/* ---- Also offered — full-bleed black strip with green cards ---- */
+.also-strip {
+  background: color-mix(in srgb, var(--ink) 66%, #000);
+  color: var(--bone);
+  padding-block: 4rem;
+}
+.also-label {
+  display: inline-block;
+  transform-origin: left center;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #fff;
+  margin-bottom: 22px;
+  transition: transform 0.18s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.also-label:hover {
+  transform: scale(1.18);
+}
+.also-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.also-card {
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: var(--hot);
+  padding: 28px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition:
+    background 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+.also-card:hover {
+  background: var(--hot-2);
+  transform: translateY(-4px);
+  box-shadow: 0 22px 46px -24px rgba(0, 0, 0, 0.6);
+}
+/* gold variant (Data Profiling) */
+.also-card.gold {
+  background: #cda027;
+}
+.also-card.gold:hover {
+  background: #b0851b;
+}
+.also-card.gold h4,
+.also-card.gold p,
+.also-card.gold .also-link {
+  color: var(--bone);
+}
+.also-card.gold p {
+  color: color-mix(in srgb, var(--bone) 88%, transparent);
+}
+.also-card.gold .also-k {
+  color: #154a29;
+}
+.also-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+.also-card h4 {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: var(--bone);
+}
+.also-k {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #e9c45f;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.also-card p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--bone) 82%, transparent);
+  text-wrap: pretty;
+}
+.also-link {
+  margin-top: auto;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--bone);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: gap 0.15s;
+}
+.also-link::after {
+  content: "\2192";
+  font-family: var(--f-body);
+}
+.also-link:hover {
+  gap: 11px;
+}
+@media (max-width: 760px) {
+  .also-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============ PROCESS ============ */
+.process {
+  background: var(--paper-2);
+}
+.process-hd {
+  margin-bottom: 56px;
+  max-width: 760px;
+}
+.process-rail {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0;
+  position: relative;
+}
+.process-step {
+  padding: 28px 22px 32px;
+  border-left: 1px solid var(--line);
+  position: relative;
+  transition: background 0.2s;
+}
+.process-step:last-child {
+  border-right: 1px solid var(--line);
+}
+.process-step:hover {
+  background: var(--bone);
+}
+.process-step .pn {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  color: var(--hot);
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.process-step .pn::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line-soft);
+}
+.process-step h4 {
+  font-family: var(--f-display);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+.process-step p {
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.55;
+}

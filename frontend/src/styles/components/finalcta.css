@@ -1,0 +1,249 @@
+/* =========================================================
+   FINAL CTA
+   ========================================================= */
+
+.final {
+  background: var(--hot);
+  color: var(--bone);
+
+  padding: clamp(64px, 8vw, 110px) var(--pad-x);
+
+  display: grid;
+  gap: 32px;
+
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative circle */
+.final::before {
+  content: "";
+
+  position: absolute;
+  right: -8%;
+  top: -45%;
+
+  width: clamp(350px, 45vw, 600px);
+  height: clamp(350px, 45vw, 600px);
+
+  border-radius: 50%;
+
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--bone) 18%, transparent) 0%,
+    transparent 70%
+  );
+
+  pointer-events: none;
+}
+
+/* Content */
+.final-copy {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 24px;
+
+  max-width: 1000px;
+}
+
+/* Main heading */
+.final-copy .h1 {
+  font-family: var(--f-display);
+
+  /*
+   * Smaller than the original 132px
+   */
+  font-size: clamp(42px, 5.5vw, 82px);
+
+  line-height: 1.02;
+
+  font-weight: 600;
+
+  letter-spacing: -0.045em;
+
+  color: var(--bone);
+
+  margin: 0;
+
+  max-width: 950px;
+
+  position: relative;
+}
+
+/* Italic/emphasis */
+.final .h1 em {
+  color: var(--ink);
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* Description */
+.final .lede {
+  position: relative;
+
+  color: color-mix(in srgb, var(--bone) 80%, transparent);
+
+  margin: 0;
+
+  max-width: 660px;
+}
+
+.final .final-copy .lede {
+  font-size: clamp(16px, 1.5vw, 21px);
+  line-height: 1.55;
+}
+
+/* Hover effect */
+.final-copy .h1,
+.final-copy .lede {
+  transform-origin: left center;
+
+  transition: transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.final-copy .h1:hover {
+  transform: scale(1.02);
+}
+
+.final-copy .lede:hover {
+  transform: scale(1.02);
+}
+
+/* Buttons */
+.final-actions {
+  display: flex;
+  gap: 12px;
+
+  flex-wrap: wrap;
+
+  position: relative;
+
+  margin-top: 4px;
+}
+
+.final .btn-primary {
+  background: var(--ink);
+  color: var(--bone);
+
+  border-color: var(--ink);
+}
+
+.final .btn-primary:hover {
+  background: var(--bone);
+  color: var(--ink);
+
+  border-color: var(--bone);
+}
+
+.final .btn-ghost {
+  color: var(--bone);
+
+  border-color: color-mix(in srgb, var(--bone) 30%, transparent);
+
+  background: transparent;
+}
+
+.final .btn-ghost:hover {
+  color: var(--bone);
+
+  border-color: var(--bone);
+
+  background: color-mix(in srgb, var(--bone) 10%, transparent);
+}
+
+/* =========================================================
+   FINAL CTA — TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .final {
+    padding-top: 72px;
+    padding-bottom: 72px;
+  }
+
+  .final-copy {
+    max-width: 760px;
+  }
+
+  .final-copy .h1 {
+    font-size: clamp(40px, 7vw, 64px);
+  }
+
+  .final .final-copy .lede {
+    font-size: 18px;
+  }
+}
+
+/* =========================================================
+   FINAL CTA — MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .final {
+    padding-top: 56px;
+    padding-bottom: 56px;
+
+    gap: 28px;
+  }
+
+  .final::before {
+    right: -35%;
+    top: -20%;
+
+    width: 380px;
+    height: 380px;
+  }
+
+  .final-copy {
+    gap: 20px;
+  }
+
+  .final-copy .h1 {
+    font-size: clamp(38px, 11vw, 52px);
+
+    line-height: 1.04;
+
+    letter-spacing: -0.035em;
+
+    max-width: 100%;
+  }
+
+  .final .final-copy .lede {
+    font-size: 16px;
+
+    line-height: 1.5;
+
+    max-width: 100%;
+  }
+
+  .final-actions {
+    flex-direction: column;
+
+    align-items: stretch;
+
+    width: 100%;
+  }
+
+  .final-actions .btn {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 380px) {
+  .final {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .final-copy .h1 {
+    font-size: 36px;
+  }
+}
