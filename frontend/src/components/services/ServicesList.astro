@@ -1,0 +1,101 @@
+---
+import '../../styles/components/services-list.css';
+
+interface Service {
+  _key?: string;
+  name?: string;
+  slug?: string;
+  description?: string;
+  flag?: string;
+  style?: string;
+  icon?: string;
+  includes?: string[];
+}
+
+interface Props {
+  data: {
+    tag?: string;
+    heading?: string;
+    headingHighlight?: string;
+    services?: Service[];
+  };
+}
+
+const {data} = Astro.props;
+
+const services = data?.services ?? [];
+---
+
+<section class="svcpage" data-screen-label="Services">
+  <div class="svc-cluster" data-screen-label={data?.tag ?? 'Data Appending'}>
+
+    <div class="svc-hd">
+      <div class="tag">{data?.tag ?? 'Data Appending'}</div>
+
+      <h2 class="h2">
+        {data?.heading ?? 'Every field,'}
+        <em>{data?.headingHighlight ?? 'verified'}</em>.
+      </h2>
+    </div>
+
+    <div class="svc-feature-grid">
+
+      {services.map((service) => (
+        <div
+          class:list={[
+            'svc-feature',
+            service.style === 'green' && 'green'
+          ]}
+          id={service.slug}
+          data-screen-label={`Svc · ${service.name}`}
+        >
+
+          <div class="svc-feature-top">
+
+            <div class="svc-icon">
+              {service.icon && (
+                <Fragment set:html={service.icon} />
+              )}
+            </div>
+
+            {service.flag && (
+              <div class="svc-row-flag">
+                {service.flag}
+              </div>
+            )}
+
+          </div>
+
+          <h3 class="svc-row-name">
+            {service.name}
+          </h3>
+
+          {service.description && (
+            <p class="svc-row-desc">
+              {service.description}
+            </p>
+          )}
+
+          {service.includes?.length > 0 && (
+            <>
+              <div class="svc-includes-lbl">
+                Includes
+              </div>
+
+              <div class="svc-includes">
+                {service.includes.map((item) => (
+                  <span class="svc-chip">
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </>
+          )}
+
+        </div>
+      ))}
+
+    </div>
+
+  </div>
+</section>

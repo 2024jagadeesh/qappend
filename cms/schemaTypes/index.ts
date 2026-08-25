@@ -11,6 +11,9 @@ import {alsoOfferedType} from './alsoOffered'
 import {whyType} from './whyType'
 import {testimonialsType} from './testimonialsType'
 import {finalCtaType} from './finalCta'
+import {servicesHeroType} from './objects/servicesHero'
+import {serviceListType} from './objects/serviceList'
+import {servicesCtaType} from './objects/servicesCta'
 
 export const schemaTypes = [
   siteSettingsType,
@@ -26,4 +29,7 @@ export const schemaTypes = [
   whyType,
   testimonialsType,
   finalCtaType,
+  servicesHeroType,
+  serviceListType,
+  servicesCtaType,
 ]

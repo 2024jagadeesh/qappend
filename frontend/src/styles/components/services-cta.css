@@ -1,0 +1,49 @@
+/* closing audit strip */
+.svc-cta {
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 36px 36px 0 0;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+.svc-cta .tag {
+  color: var(--bone);
+}
+.svc-cta .tag::before {
+  background: var(--bone);
+}
+.svc-cta h2 {
+  color: var(--paper);
+}
+.svc-cta h2 em {
+  color: var(--hot);
+}
+.svc-cta p {
+  color: color-mix(in srgb, var(--paper) 72%, transparent);
+  font-size: 18px;
+  line-height: 1.55;
+  max-width: 48ch;
+  margin-top: 18px;
+}
+.svc-cta-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+.svc-cta .btn-hot {
+  color: var(--ink);
+}
+.svc-cta .btn-hot:hover {
+  color: var(--ink);
+}
+
+@media (max-width: 920px) {
+  .svc-cta {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .svc-cta-actions {
+    justify-content: flex-start;
+  }
+}

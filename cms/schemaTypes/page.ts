@@ -33,6 +33,15 @@ export const pageType = defineType({
           type: 'hero',
         },
         {
+          type: 'servicesHero',
+        },
+        {
+          type: 'serviceList',
+        },
+        {
+          type: 'servicesCta',
+        },
+        {
           type: 'stats',
         },
         {

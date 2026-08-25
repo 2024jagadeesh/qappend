@@ -178,7 +178,43 @@ export const PAGE_QUERY = `
             link,
             style
           }
-        }
+        },
+
+        _type == "servicesHero" => {
+          eyebrow,
+          heading,
+          headingHighlight,
+          description,
+          ctaText,
+          ctaLink,
+          demoId
+        },
+
+        _type == "serviceList" => {
+          tag,
+          heading,
+          headingHighlight,
+
+          services[]{
+            _key,
+            name,
+            "slug": slug.current,
+            description,
+            flag,
+            style,
+            icon,
+            includes
+          }
+        },
+
+        _type == "servicesCta" => {
+          tag,
+          heading,
+          headingHighlight,
+          description,
+          buttonText,
+          buttonLink
+        },
 
       )
     }

@@ -1,0 +1,26 @@
+---
+import '../../styles/components/services-cta.css';
+const { data } = Astro.props;
+---
+
+<section class="svc-cta" data-screen-label="Services · CTA">
+  <div>
+    <div class="tag">{data.tag}</div>
+
+    <h2 class="h2">
+      {data.heading}
+      <em>{data.headingHighlight}</em>
+    </h2>
+
+    <p>{data.description}</p>
+  </div>
+
+  <div class="svc-cta-actions">
+    <button
+      class="btn btn-hot"
+      data-open-modal
+    >
+      {data.buttonText}
+    </button>
+  </div>
+</section>
