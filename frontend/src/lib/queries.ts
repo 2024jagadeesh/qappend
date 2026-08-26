@@ -216,6 +216,24 @@ export const PAGE_QUERY = `
           buttonLink
         },
 
+        _type == "processHero" => {
+          breadcrumbLabel,
+          heading,
+          headingHighlight,
+          description,
+          ctaText
+        },
+
+        _type == "pageHero" => {
+          screenLabel,
+          breadcrumbLabel,
+          heading,
+          headingHighlight,
+          description,
+          ctaText,
+          demoId
+        },
+
       )
     }
   }

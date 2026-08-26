@@ -128,7 +128,7 @@ export const heroType = defineType({
 
     prepare({title, badge}) {
       return {
-        title: title || 'Hero',
+        title: `Homepage Hero — ${title || 'Hero'}`,
         subtitle: badge || 'Homepage Hero',
       }
     },

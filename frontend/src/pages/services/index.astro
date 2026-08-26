@@ -1,9 +1,6 @@
 ---
 import MainLayout from '../../layouts/MainLayout.astro';
-
-import ServicesHero from '../../components/services/ServicesHero.astro';
-import ServicesList from '../../components/services/ServicesList.astro';
-import ServicesCta from '../../components/services/ServicesCta.astro';
+import PageRenderer from '../../components/common/PageRenderer.astro';
 
 import { sanityClient } from '../../lib/sanity';
 import { PAGE_QUERY } from '../../lib/queries';
@@ -12,26 +9,10 @@ const page = await sanityClient.fetch(
   PAGE_QUERY,
   { slug: 'services' }
 );
-
-const hero = page?.sections?.find(
-  (section: any) => section._type === 'servicesHero'
-);
-
-const serviceList = page?.sections?.find(
-  (section: any) => section._type === 'serviceList'
-);
-
-const cta = page?.sections?.find(
-  (section: any) => section._type === 'servicesCta'
-);
 ---
 
 <MainLayout title={page?.title ?? 'QuickAppend'}>
 
-  {hero && <ServicesHero data={hero} />}
-
-  {serviceList && <ServicesList data={serviceList} />}
-
-  {cta && <ServicesCta data={cta} />}
+  <PageRenderer sections={page?.sections} />
 
 </MainLayout>

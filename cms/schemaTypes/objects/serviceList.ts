@@ -96,8 +96,15 @@ export const serviceListType = defineType({
 
           preview: {
             select: {
-              title: 'name',
-              subtitle: 'flag',
+              name: 'name',
+              flag: 'flag',
+            },
+
+            prepare({name, flag}) {
+              return {
+                title: name || 'Service',
+                subtitle: flag || 'Service',
+              }
             },
           },
         },
@@ -107,8 +114,16 @@ export const serviceListType = defineType({
 
   preview: {
     select: {
-      title: 'heading',
-      subtitle: 'tag',
+      heading: 'heading',
+      highlight: 'headingHighlight',
+      tag: 'tag',
+    },
+
+    prepare({heading, highlight, tag}) {
+      return {
+        title: 'Services List',
+        subtitle: `${heading || ''} ${highlight || ''} — ${tag || 'Data Appending'}`,
+      }
     },
   },
 })

@@ -1,0 +1,79 @@
+---
+import Hero from '../home/Hero.astro';
+import Stats from '../home/Stats.astro';
+import Marquee from '../home/Marquee.astro';
+import Intro from '../home/Intro.astro';
+import VideoBand from '../home/VideoBand.astro';
+import AppendingEnrichment from '../home/AppendingEnrichment.astro';
+import AlsoOffered from '../home/AlsoOffered.astro';
+import Compare from '../home/Compare.astro';
+import Why from '../home/Why.astro';
+import Testimonials from '../home/Testimonials.astro';
+import FinalCta from '../home/FinalCta.astro';
+
+import ServicesList from '../services/ServicesList.astro';
+import ServicesCta from '../services/ServicesCta.astro';
+
+import PageHero from '../common/PageHero.astro';
+
+interface Props {
+  sections?: any[];
+}
+
+const { sections = [] } = Astro.props;
+---
+
+{
+  sections.map((section) => {
+    switch (section._type) {
+      case 'hero':
+        return <Hero data={section} />;
+
+      case 'stats':
+        return <Stats data={section} />;
+
+      case 'marquee':
+        return <Marquee data={section} />;
+
+      case 'intro':
+        return <Intro data={section} />;
+
+      case 'videoBand':
+        return <VideoBand data={section} />;
+
+      case 'appendingEnrichment':
+        return <AppendingEnrichment data={section} />;
+
+      case 'alsoOffered':
+        return <AlsoOffered data={section} />;
+
+      case 'compare':
+        return <Compare data={section} />;
+
+      case 'why':
+        return <Why data={section} />;
+
+      case 'testimonials':
+        return <Testimonials data={section} />;
+
+      case 'finalCta':
+        return <FinalCta data={section} />;
+
+      case 'serviceList':
+        return <ServicesList data={section} />;
+
+      case 'servicesCta':
+        return <ServicesCta data={section} />;
+        
+        case 'pageHero':
+  return <PageHero data={section} />;
+
+      default:
+        console.warn(
+          `Unknown Sanity section type: ${section._type}`
+        );
+
+        return null;
+    }
+  })
+}

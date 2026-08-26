@@ -1,0 +1,32 @@
+---
+import '../../styles/components/page-hero.css';
+const {data} = Astro.props;
+---
+
+<section
+  class="page-head"
+  data-screen-label={`${data?.breadcrumbLabel ?? 'Page'} · Header`}
+>
+  <div class="crumb">
+    <a href="/">QuickAppend</a>
+    <span>/</span>
+    <b>{data?.breadcrumbLabel}</b>
+  </div>
+
+  <h1 class="h1">
+    {data?.heading}
+    {data?.headingHighlight && (
+      <em>{data.headingHighlight}</em>
+    )}.
+  </h1>
+
+  <p class="lede">
+    {data?.description}
+  </p>
+
+  <div class="hero-actions">
+    <button class="btn btn-hot" data-open-modal>
+      {data?.ctaText ?? 'Request free audit'}
+    </button>
+  </div>
+</section>

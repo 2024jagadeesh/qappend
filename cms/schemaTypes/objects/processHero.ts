@@ -1,30 +1,32 @@
 import {defineField, defineType} from 'sanity'
 
-export const servicesCtaType = defineType({
-  name: 'servicesCta',
-  title: 'Services — Closing CTA',
+export const processHeroType = defineType({
+  name: 'processHero',
+  title: 'Process Hero',
   type: 'object',
 
   fields: [
     defineField({
-      name: 'tag',
-      title: 'Tag',
+      name: 'breadcrumbLabel',
+      title: 'Breadcrumb Label',
       type: 'string',
-      initialValue: 'Free sample audit',
+      initialValue: 'Process',
     }),
 
     defineField({
       name: 'heading',
       title: 'Heading',
       type: 'string',
-      initialValue: 'Not sure which fields',
+      initialValue: 'From raw list to',
+      validation: (Rule) => Rule.required(),
     }),
 
     defineField({
       name: 'headingHighlight',
       title: 'Heading Highlight',
       type: 'string',
-      initialValue: "you're missing?",
+      initialValue: 'revenue-ready',
+      validation: (Rule) => Rule.required(),
     }),
 
     defineField({
@@ -32,19 +34,14 @@ export const servicesCtaType = defineType({
       title: 'Description',
       type: 'text',
       rows: 4,
+      validation: (Rule) => Rule.required(),
     }),
 
     defineField({
-      name: 'buttonText',
-      title: 'Button Text',
+      name: 'ctaText',
+      title: 'CTA Text',
       type: 'string',
       initialValue: 'Request free audit',
-    }),
-
-    defineField({
-      name: 'buttonLink',
-      title: 'Button Link',
-      type: 'url',
     }),
   ],
 
@@ -52,13 +49,13 @@ export const servicesCtaType = defineType({
     select: {
       heading: 'heading',
       highlight: 'headingHighlight',
-      tag: 'tag',
+      breadcrumb: 'breadcrumbLabel',
     },
 
-    prepare({heading, highlight, tag}) {
+    prepare({heading, highlight, breadcrumb}) {
       return {
-        title: 'Services — Closing CTA',
-        subtitle: `${heading || ''} ${highlight || ''} — ${tag || 'CTA'}`,
+        title: `Process Hero — ${heading || 'From raw list to'}${highlight ? ` ${highlight}` : ''}`,
+        subtitle: breadcrumb || 'Process',
       }
     },
   },

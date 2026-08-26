@@ -83,8 +83,16 @@ export const servicesHeroType = defineType({
 
   preview: {
     select: {
-      title: 'heading',
-      subtitle: 'breadcrumbLabel',
+      heading: 'heading',
+      highlight: 'headingHighlight',
+      label: 'breadcrumbLabel',
+    },
+
+    prepare({heading, highlight, label}) {
+      return {
+        title: 'Services Hero',
+        subtitle: `${heading || ''} ${highlight || ''} — ${label || 'Services'}`,
+      }
     },
   },
 })
