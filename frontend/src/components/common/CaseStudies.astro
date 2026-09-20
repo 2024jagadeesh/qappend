@@ -1,0 +1,49 @@
+---
+import '../../styles/components/case-studies.css';
+
+const { data } = Astro.props;
+---
+
+<section
+  class="cases"
+  data-screen-label="10 Cases"
+>
+  <div class="cases-hd">
+    <div>
+      <div class="tag">{data?.tag}</div>
+
+      <h2 class="h2">
+        {data?.heading}
+        <em>{data?.headingHighlight}</em>.
+      </h2>
+    </div>
+
+    <p class="lede">
+      {data?.description}
+    </p>
+  </div>
+
+  <div class="cs-grid">
+    {data?.items?.map((item: any) => (
+      <div class="cs">
+        <div class="cs-stat">
+          {item?.stat}
+          {item?.statHighlight && <em>{item.statHighlight}</em>}
+        </div>
+
+        <h4>{item?.title}</h4>
+
+        <p>{item?.description}</p>
+      </div>
+    ))}
+  </div>
+
+  <div style="text-align: center;">
+    <a
+      class="btn btn-hot"
+      href={data?.buttonLink || '/case-studies/'}
+    >
+      {data?.buttonText || 'Read full case studies'}
+    </a>
+  </div>
+</section>

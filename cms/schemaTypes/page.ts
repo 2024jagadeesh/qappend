@@ -71,6 +71,12 @@ export const pageType = defineType({
         {
           type: 'pageHero',
         },
+        {
+          type: 'process',
+        },
+        {
+          type: 'caseStudies',
+        },
       ],
     }),
   ],

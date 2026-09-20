@@ -14,6 +14,8 @@ import {finalCtaType} from './finalCta'
 import {serviceListType} from './objects/serviceList'
 import {servicesCtaType} from './objects/servicesCta'
 import {pageHeroType} from './objects/pageHero'
+import {processType} from './objects/processType'
+import {caseStudiesType} from './objects/caseStudiesType'
 
 export const schemaTypes = [
   siteSettingsType,
@@ -32,4 +34,6 @@ export const schemaTypes = [
   serviceListType,
   servicesCtaType,
   pageHeroType,
+  processType,
+  caseStudiesType,
 ]

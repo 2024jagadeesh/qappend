@@ -234,6 +234,47 @@ export const PAGE_QUERY = `
           demoId
         },
 
+        _type == "processHero" => {
+  breadcrumbLabel,
+  heading,
+  headingHighlight,
+  description,
+  ctaText
+},
+
+_type == "process" => {
+  tag,
+  heading,
+  headingHighlight,
+  headingSuffix,
+  description,
+
+  steps[]{
+    _key,
+    title,
+    description,
+    label
+  }
+},
+
+_type == "caseStudies" => {
+  tag,
+  heading,
+  headingHighlight,
+  description,
+
+  items[]{
+    _key,
+    stat,
+    statHighlight,
+    title,
+    description
+  },
+
+  buttonText,
+  buttonLink
+},
+
       )
     }
   }

@@ -1,0 +1,355 @@
+---
+import '../../styles/components/process.css';
+const { data } = Astro.props;
+---
+
+<section class="process" id="process" data-screen-label="06 Process">
+
+  <div class="process-hd">
+
+    <div class="tag">
+      {data?.tag}
+    </div>
+
+    <h2 class="h2">
+      {data?.heading}
+      <em>{data?.headingHighlight}</em>
+      {data?.headingSuffix}
+    </h2>
+
+    <p class="lede" style="margin-top: 24px;">
+      {data?.description}
+    </p>
+
+    <button
+      type="button"
+      class="btn btn-hot pipe-rerun"
+      id="procRerun"
+      style="margin-top:22px;display:none;"
+    >
+      ↺ Watch again
+    </button>
+
+  </div>
+
+
+  <div class="pipe" id="procPipe">
+
+    <div class="pipe-stages">
+
+      {data?.steps?.map((step: any, index: number) => (
+        <div class="stage">
+
+          <div class="pn">
+            Step {String(index + 1).padStart(2, '0')}
+          </div>
+
+          <h4>{step?.title}</h4>
+
+          <p>{step?.description}</p>
+
+          <span class="stage-add">
+            {step?.label}
+          </span>
+
+        </div>
+      ))}
+
+    </div>
+
+
+    <!-- CRM -->
+    <div class="pipe-crm" id="procCrm">
+
+      <div class="pipe-crm-head">
+        <div class="pipe-crm-title">
+          <span class="dot"></span>
+          Your CRM
+        </div>
+
+        <div class="pipe-crm-tag">
+          record · live
+        </div>
+      </div>
+
+
+      <div class="crm-rows">
+
+        <div class="crm-row">
+          <span class="chk">
+            <svg viewBox="0 0 12 12">
+              <path d="M2 6l3 3 5-6"/>
+            </svg>
+          </span>
+          Records loaded
+        </div>
+
+        <div class="crm-row">
+          <span class="chk">
+            <svg viewBox="0 0 12 12">
+              <path d="M2 6l3 3 5-6"/>
+            </svg>
+          </span>
+          Gaps identified
+        </div>
+
+        <div class="crm-row">
+          <span class="chk">
+            <svg viewBox="0 0 12 12">
+              <path d="M2 6l3 3 5-6"/>
+            </svg>
+          </span>
+          Cleaned &amp; deduped
+        </div>
+
+        <div class="crm-row">
+          <span class="chk">
+            <svg viewBox="0 0 12 12">
+              <path d="M2 6l3 3 5-6"/>
+            </svg>
+          </span>
+          Email + direct dial
+        </div>
+
+        <div class="crm-row">
+          <span class="chk">
+            <svg viewBox="0 0 12 12">
+              <path d="M2 6l3 3 5-6"/>
+            </svg>
+          </span>
+          Firmographics + intent
+        </div>
+
+        <div class="crm-row">
+          <span class="chk">
+            <svg viewBox="0 0 12 12">
+              <path d="M2 6l3 3 5-6"/>
+            </svg>
+          </span>
+          ICP fit: A-tier
+        </div>
+
+        <div class="crm-row">
+          <span class="chk">
+            <svg viewBox="0 0 12 12">
+              <path d="M2 6l3 3 5-6"/>
+            </svg>
+          </span>
+          Verified twice
+        </div>
+
+        <div class="crm-row">
+          <span class="chk">
+            <svg viewBox="0 0 12 12">
+              <path d="M2 6l3 3 5-6"/>
+            </svg>
+          </span>
+          Synced to CRM
+        </div>
+
+      </div>
+
+
+      <div class="crm-meter">
+
+        <div class="crm-meter-top">
+          <span>Record completeness</span>
+          <span id="crmMeterPct">0%</span>
+        </div>
+
+        <div class="crm-meter-bar">
+          <div
+            class="crm-meter-fill"
+            id="crmMeterFill"
+          ></div>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Moving packet -->
+    <div
+      class="pipe-packet"
+      id="procPacket"
+      aria-hidden="true"
+    >
+      <svg viewBox="0 0 24 24">
+        <path d="M4 7l8-4 8 4v10l-8 4-8-4z"/>
+        <path d="M4 7l8 4 8-4M12 11v10"/>
+      </svg>
+    </div>
+
+  </div>
+
+</section>
+
+<script>
+(function(){
+  var pipe = document.getElementById('procPipe');
+  if(!pipe) return;
+
+  var stages = Array.prototype.slice.call(
+    pipe.querySelectorAll('.stage')
+  );
+
+  var packet = document.getElementById('procPacket');
+  var crm = document.getElementById('procCrm');
+
+  var rows = Array.prototype.slice.call(
+    crm.querySelectorAll('.crm-row')
+  );
+
+  var fill = document.getElementById('crmMeterFill');
+  var pct = document.getElementById('crmMeterPct');
+
+  var i = 0;
+  var timer = null;
+  var current = null;
+
+  var rerun = document.getElementById('procRerun');
+
+  function moveTo(el, instant){
+    var p = pipe.getBoundingClientRect();
+    var r = el.getBoundingClientRect();
+
+    var x = r.left - p.left +
+      r.width / 2 -
+      packet.offsetWidth / 2;
+
+    var y = r.top - p.top +
+      r.height / 2 -
+      packet.offsetHeight / 2;
+
+    if(instant){
+      packet.style.transition = 'none';
+    }
+
+    packet.style.transform =
+      'translate(' + x + 'px,' + y + 'px)';
+
+    if(instant){
+      void packet.offsetWidth;
+      packet.style.transition = '';
+    }
+
+    current = el;
+  }
+
+  function resetAll(){
+    stages.forEach(function(s){
+      s.classList.remove('active','done');
+    });
+
+    rows.forEach(function(r){
+      r.classList.remove('on');
+    });
+
+    fill.style.width = '0%';
+    pct.textContent = '0%';
+  }
+
+  function step(){
+
+    if(i > 0){
+      stages[i - 1].classList.remove('active');
+      stages[i - 1].classList.add('done');
+    }
+
+    if(i < stages.length){
+
+      var s = stages[i];
+
+      s.classList.add('active');
+
+      moveTo(s);
+
+      if(rows[i]){
+        rows[i].classList.add('on');
+      }
+
+      var p = Math.round(
+        ((i + 1) / stages.length) * 100
+      );
+
+      fill.style.width = p + '%';
+      pct.textContent = p + '%';
+
+      i++;
+
+      timer = setTimeout(step, 1000);
+
+    } else {
+
+      moveTo(crm);
+
+      stages[stages.length - 1]
+        .classList.remove('active');
+
+      stages[stages.length - 1]
+        .classList.add('done');
+
+      if(rerun){
+        rerun.style.display = 'inline-flex';
+      }
+    }
+  }
+
+  function begin(){
+
+    clearTimeout(timer);
+
+    if(rerun){
+      rerun.style.display = 'none';
+    }
+
+    i = 0;
+
+    resetAll();
+
+    moveTo(stages[0], true);
+
+    packet.classList.add('show');
+
+    timer = setTimeout(step, 600);
+  }
+
+  if(rerun){
+    rerun.addEventListener('click', begin);
+  }
+
+  window.addEventListener('resize', function(){
+
+    if(current){
+      moveTo(current, true);
+    }
+
+  });
+
+  var started = false;
+
+  var io = new IntersectionObserver(
+    function(entries){
+
+      entries.forEach(function(e){
+
+        if(e.isIntersecting && !started){
+
+          started = true;
+
+          begin();
+        }
+
+      });
+
+    },
+    {
+      threshold: 0.35
+    }
+  );
+
+  io.observe(pipe);
+
+})();
+</script>
