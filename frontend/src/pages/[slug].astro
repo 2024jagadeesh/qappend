@@ -1,0 +1,34 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import PageRenderer from '../components/common/PageRenderer.astro';
+import { sanityClient } from '../lib/sanity';
+import { PAGE_QUERY } from '../lib/queries';
+
+export async function getStaticPaths() {
+  const pages = await sanityClient.fetch(`
+    *[_type == "page" && defined(slug.current)]{
+      "slug": slug.current
+    }
+  `);
+
+  return pages.map((page: { slug: string }) => ({
+    params: {
+      slug: page.slug,
+    },
+  }));
+}
+
+const { slug } = Astro.params;
+
+const page = await sanityClient.fetch(PAGE_QUERY, {
+  slug,
+});
+
+if (!page) {
+  return Astro.redirect('/404');
+}
+---
+
+<MainLayout title={page.title}>
+  <PageRenderer sections={page.sections} />
+</MainLayout>

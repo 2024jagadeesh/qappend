@@ -12,10 +12,8 @@ import Testimonials from '../home/Testimonials.astro';
 import FinalCta from '../home/FinalCta.astro';
 
 import PageHero from './PageHero.astro';
-
 import ServicesList from '../services/ServicesList.astro';
 import ServicesCta from '../services/ServicesCta.astro';
-
 import Process from '../process/Process.astro';
 import CaseStudies from '../common/CaseStudies.astro';
 
@@ -29,8 +27,12 @@ const { sections = [] } = Astro.props;
 {
   sections.map((section) => {
     switch (section._type) {
+
       case 'hero':
         return <Hero data={section} />;
+
+      case 'pageHero':
+        return <PageHero data={section} />;
 
       case 'stats':
         return <Stats data={section} />;
@@ -59,24 +61,20 @@ const { sections = [] } = Astro.props;
       case 'testimonials':
         return <Testimonials data={section} />;
 
-      case 'finalCta':
-        return <FinalCta data={section} />;
-
-        case 'pageHero':
-  return <PageHero data={section} />;
-
       case 'serviceList':
         return <ServicesList data={section} />;
 
       case 'servicesCta':
         return <ServicesCta data={section} />;
 
-        case 'process':
-  return <Process data={section} />;
+      case 'process':
+        return <Process data={section} />;
 
-  case 'caseStudies':
-  return <CaseStudies data={section} />;
-       
+      case 'caseStudies':
+        return <CaseStudies data={section} />;
+
+      case 'finalCta':
+        return <FinalCta data={section} />;
 
       default:
         console.warn(

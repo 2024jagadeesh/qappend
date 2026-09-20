@@ -47,3 +47,34 @@
     justify-content: flex-start;
   }
 }
+
+/* Green CTA variant */
+.svc-cta--green {
+  background: #154a29;
+  color: var(--paper);
+  border-radius: 0;
+}
+
+.svc-cta--green .tag {
+  color: var(--paper);
+}
+
+.svc-cta--green .tag::before {
+  background: var(--paper);
+}
+
+.svc-cta--green h2 {
+  color: var(--paper);
+}
+
+.svc-cta--green h2 em {
+  color: var(--hot);
+}
+
+.svc-cta--green p {
+  color: color-mix(in srgb, var(--paper) 78%, transparent);
+}
+
+.svc-cta--green .btn-hot {
+  color: var(--ink);
+}

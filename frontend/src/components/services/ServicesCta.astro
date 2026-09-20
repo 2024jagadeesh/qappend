@@ -1,18 +1,29 @@
 ---
 import '../../styles/components/services-cta.css';
+
 const { data } = Astro.props;
+
+const variant = data.variant || 'default';
 ---
 
-<section class="svc-cta" data-screen-label="Services · CTA">
+<section
+  class:list={[
+    'svc-cta',
+    variant === 'green' && 'svc-cta--green',
+  ]}
+  data-screen-label={data.screenLabel || 'Services · CTA'}
+>
   <div>
-    <div class="tag">{data.tag}</div>
+    {data.tag && <div class="tag">{data.tag}</div>}
 
     <h2 class="h2">
       {data.heading}
-      <em>{data.headingHighlight}</em>
+      {data.headingHighlight && (
+        <em>{data.headingHighlight}</em>
+      )}
     </h2>
 
-    <p>{data.description}</p>
+    {data.description && <p>{data.description}</p>}
   </div>
 
   <div class="svc-cta-actions">

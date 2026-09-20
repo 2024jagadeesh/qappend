@@ -2,7 +2,7 @@ import {defineField, defineType} from 'sanity'
 
 export const servicesCtaType = defineType({
   name: 'servicesCta',
-  title: 'Services — Closing CTA',
+  title: 'Services — CTA',
   type: 'object',
 
   fields: [
@@ -46,6 +46,33 @@ export const servicesCtaType = defineType({
       title: 'Button Link',
       type: 'url',
     }),
+
+    defineField({
+      name: 'variant',
+      title: 'CTA Style',
+      type: 'string',
+      options: {
+        list: [
+          {
+            title: 'Default',
+            value: 'default',
+          },
+          {
+            title: 'Green / Full Width',
+            value: 'green',
+          },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'default',
+    }),
+
+    defineField({
+      name: 'screenLabel',
+      title: 'Screen Label',
+      type: 'string',
+      initialValue: 'Services · CTA',
+    }),
   ],
 
   preview: {
@@ -53,12 +80,13 @@ export const servicesCtaType = defineType({
       heading: 'heading',
       highlight: 'headingHighlight',
       tag: 'tag',
+      variant: 'variant',
     },
 
-    prepare({heading, highlight, tag}) {
+    prepare({heading, highlight, tag, variant}) {
       return {
-        title: 'Services — Closing CTA',
-        subtitle: `${heading || ''} ${highlight || ''} — ${tag || 'CTA'}`,
+        title: 'Services — CTA',
+        subtitle: `${heading || ''} ${highlight || ''} — ${tag || 'CTA'} (${variant || 'default'})`,
       }
     },
   },

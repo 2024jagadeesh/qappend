@@ -208,13 +208,15 @@ export const PAGE_QUERY = `
         },
 
         _type == "servicesCta" => {
-          tag,
-          heading,
-          headingHighlight,
-          description,
-          buttonText,
-          buttonLink
-        },
+  tag,
+  heading,
+  headingHighlight,
+  description,
+  buttonText,
+  buttonLink,
+  variant,
+  screenLabel
+},
 
         _type == "processHero" => {
           breadcrumbLabel,
