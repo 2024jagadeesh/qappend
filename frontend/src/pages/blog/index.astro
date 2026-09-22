@@ -1,0 +1,741 @@
+---
+import Layout from '../../layouts/MainLayout.astro';
+import { sanityClient } from '../../lib/sanity';
+
+/* =========================================================
+   BLOG PAGE SETTINGS
+   ========================================================= */
+
+const pageSettings = await sanityClient.fetch(`
+  *[_type == "blogPage"][0] {
+    breadcrumb {
+      label
+    },
+
+    hero {
+      heading,
+      highlight,
+      description,
+      button {
+        text,
+        link
+      }
+    },
+
+    finalCta {
+      heading,
+      highlight,
+      description,
+      primaryButton {
+        text,
+        link
+      },
+      secondaryButton {
+        text,
+        link
+      }
+    }
+  }
+`);
+
+
+/* =========================================================
+   BLOG POSTS
+   ========================================================= */
+
+const blogs = await sanityClient.fetch(`
+  *[_type == "blog"] | order(publishedAt desc) {
+    _id,
+    title,
+    slug,
+    category,
+    excerpt,
+    author,
+    publishedAt,
+    readTime,
+    featured,
+    image {
+      asset-> {
+        _id,
+        url
+      },
+      alt
+    }
+  }
+`);
+
+
+/* =========================================================
+   FEATURED BLOG
+   ========================================================= */
+
+const featured =
+  blogs.find((item: any) => item.featured === true) || blogs[0];
+
+
+/* =========================================================
+   ALL OTHER BLOG POSTS
+   ========================================================= */
+
+const regularBlogs = blogs.filter(
+  (item: any) => item._id !== featured?._id
+);
+
+
+/* =========================================================
+   DATE FORMAT
+   ========================================================= */
+
+const formatDate = (date: string) => {
+  if (!date) return '';
+
+  return new Date(date).toLocaleDateString('en-US', {
+    month: 'short',
+    year: 'numeric'
+  });
+};
+---
+
+<Layout title="Blog · QuickAppend">
+
+  <!-- =========================================================
+       PAGE HEADER
+       ========================================================== -->
+
+  <section class="page-head">
+
+    <div class="crumb">
+      <a href="/">QuickAppend</a>
+      <span>/</span>
+
+      <b>
+        {pageSettings?.breadcrumb?.label || 'Blog'}
+      </b>
+    </div>
+
+
+    <h1 class="h1">
+
+      <span>
+        {pageSettings?.hero?.heading || 'Thoughts & Insights on clean'}
+      </span>
+
+      <em>
+        {pageSettings?.hero?.highlight || 'data'}
+      </em>.
+
+    </h1>
+
+
+    <p class="lede">
+
+      {pageSettings?.hero?.description ||
+        'Field-tested guides on data quality, appending, and enrichment from the team that runs these workflows every day. Practical, opinionated, and built for revenue operators.'}
+
+    </p>
+
+
+    <div class="hero-actions">
+
+      {
+        pageSettings?.hero?.button?.text && (
+
+          <a
+            class="btn btn-hot"
+            href={pageSettings.hero.button.link || '/contact'}
+          >
+            {pageSettings.hero.button.text}
+          </a>
+
+        )
+      }
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================================
+       BLOG HUB
+       ========================================================== -->
+
+  <section class="bloghub">
+
+    <!-- =======================================================
+         FEATURED BLOG
+         ======================================================== -->
+
+    {
+      featured && (
+
+        <a
+          class="blog-feat"
+          href={
+            featured.slug?.current
+              ? `/blog/${featured.slug.current}`
+              : '#'
+          }
+        >
+
+          <!-- FEATURED IMAGE -->
+
+          <div class="blog-feat-image">
+
+            {
+              featured.image?.asset?.url ? (
+
+                <img
+                  src={featured.image.asset.url}
+                  alt={featured.image.alt || featured.title}
+                />
+
+              ) : (
+
+                <div class="ph">
+                  Featured article
+                </div>
+
+              )
+            }
+
+          </div>
+
+
+          <!-- FEATURED CONTENT -->
+
+          <div class="blog-feat-body">
+
+            {
+              featured.category && (
+                <div class="blog-cat">
+                  {featured.category}
+                </div>
+              )
+            }
+
+
+            <h2>
+              {featured.title}
+            </h2>
+
+
+            {
+              featured.excerpt && (
+                <p>
+                  {featured.excerpt}
+                </p>
+              )
+            }
+
+
+            <div class="blog-meta">
+
+              {
+                featured.author && (
+                  <span>{featured.author}</span>
+                )
+              }
+
+              {
+                featured.publishedAt && (
+                  <span>
+                    · {formatDate(featured.publishedAt)}
+                  </span>
+                )
+              }
+
+              {
+                featured.readTime && (
+                  <span>
+                    · {featured.readTime}
+                  </span>
+                )
+              }
+
+            </div>
+
+          </div>
+
+        </a>
+
+      )
+    }
+
+
+    <!-- =======================================================
+         BLOG GRID
+         ======================================================== -->
+
+    <div class="blog-grid">
+
+      {
+        regularBlogs.map((post: any, index: number) => (
+
+          <a
+            class={`blog-card ${index % 2 === 1 ? 'slate' : ''}`}
+            href={
+              post.slug?.current
+                ? `/blog/${post.slug.current}`
+                : '#'
+            }
+          >
+
+            <!-- IMAGE -->
+
+            {
+              post.image?.asset?.url ? (
+
+                <img
+                  class="blog-card-image"
+                  src={post.image.asset.url}
+                  alt={post.image.alt || post.title}
+                />
+
+              ) : (
+
+                <div class="ph">
+                  Article
+                </div>
+
+              )
+            }
+
+
+            <!-- CARD CONTENT -->
+
+            <div class="blog-card-body">
+
+              {
+                post.category && (
+                  <div class="blog-cat">
+                    {post.category}
+                  </div>
+                )
+              }
+
+
+              <h3>
+                {post.title}
+              </h3>
+
+
+              {
+                post.excerpt && (
+                  <p>
+                    {post.excerpt}
+                  </p>
+                )
+              }
+
+
+              <div class="blog-meta">
+
+                {
+                  post.author && (
+                    <span>{post.author}</span>
+                  )
+                }
+
+                {
+                  post.publishedAt && (
+                    <span>
+                      · {formatDate(post.publishedAt)}
+                    </span>
+                  )
+                }
+
+                {
+                  post.readTime && (
+                    <span>
+                      · {post.readTime}
+                    </span>
+                  )
+                }
+
+              </div>
+
+            </div>
+
+          </a>
+
+        ))
+      }
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================================
+       FINAL CTA
+       ========================================================== -->
+
+  <section class="final">
+
+    <h2
+      class="h1"
+      style="font-size: clamp(40px, 6vw, 88px);"
+    >
+
+      <span>
+        {pageSettings?.finalCta?.heading || 'Put the playbook'}
+      </span>
+
+      <em>
+        {pageSettings?.finalCta?.highlight || 'to work.'}
+      </em>
+
+    </h2>
+
+
+    <p
+      class="lede"
+      style="max-width: 60ch;"
+    >
+
+      {
+        pageSettings?.finalCta?.description ||
+        "Reading about clean data is one thing. Request a free audit and we'll show you exactly what's missing in your records right now."
+      }
+
+    </p>
+
+
+    <div class="final-actions">
+
+      {
+        pageSettings?.finalCta?.primaryButton?.text && (
+
+          <a
+            class="btn btn-primary"
+            href={
+              pageSettings.finalCta.primaryButton.link ||
+              '/contact'
+            }
+          >
+            {pageSettings.finalCta.primaryButton.text}
+          </a>
+
+        )
+      }
+
+
+      {
+        pageSettings?.finalCta?.secondaryButton?.text && (
+
+          <a
+            class="btn btn-ghost"
+            href={
+              pageSettings.finalCta.secondaryButton.link ||
+              '/contact'
+            }
+          >
+            {pageSettings.finalCta.secondaryButton.text}
+          </a>
+
+        )
+      }
+
+    </div>
+
+  </section>
+
+</Layout>
+
+
+<style>
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.page-head {
+  padding: 132px var(--pad-x) 64px;
+  background: var(--paper);
+  display: grid;
+  gap: 22px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.crumb {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.crumb a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.crumb a:hover {
+  color: var(--ink);
+}
+
+.crumb span {
+  color: var(--line);
+}
+
+.crumb b {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.page-head h1 {
+  max-width: 18ch;
+}
+
+.page-head .lede {
+  max-width: 60ch;
+}
+
+
+/* =========================================================
+   BLOG HUB
+   ========================================================= */
+
+.bloghub {
+  background: var(--paper);
+}
+
+
+/* =========================================================
+   PLACEHOLDER
+   ========================================================= */
+
+.ph {
+  background:
+    repeating-linear-gradient(
+      45deg,
+      var(--bone),
+      var(--bone) 11px,
+      #ece5d7 11px,
+      #ece5d7 22px
+    );
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--muted);
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+
+/* =========================================================
+   BLOG CATEGORY
+   ========================================================= */
+
+.blog-cat {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--hot);
+}
+
+
+/* =========================================================
+   BLOG META
+   ========================================================= */
+
+.blog-meta {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: .03em;
+  color: var(--muted);
+}
+
+
+/* =========================================================
+   FEATURED BLOG
+   ========================================================= */
+
+.blog-feat {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  overflow: hidden;
+
+  margin-bottom: 48px;
+
+  align-items: center;
+
+  text-decoration: none;
+  color: inherit;
+}
+
+.blog-feat-image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.blog-feat-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.blog-feat-body {
+  padding: clamp(36px, 4vw, 58px);
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  justify-content: center;
+}
+
+.blog-feat-body h2 {
+  font-family: var(--f-display);
+  font-size: clamp(28px, 3.2vw, 46px);
+  font-weight: 600;
+  letter-spacing: -.03em;
+  line-height: 1.04;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+.blog-feat-body p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+
+/* =========================================================
+   BLOG GRID
+   ========================================================= */
+
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+
+/* =========================================================
+   BLOG CARD
+   ========================================================= */
+
+.blog-card {
+  display: flex;
+  flex-direction: column;
+
+  border: 1px solid transparent;
+  border-radius: 16px;
+
+  overflow: hidden;
+
+  background: #154a29;
+
+  transition:
+    border-color .2s,
+    transform .2s;
+
+  text-decoration: none;
+}
+
+.blog-card:hover {
+  border-color: #d4a82c;
+  transform: translateY(-3px);
+}
+
+.blog-card-image {
+  width: 100%;
+  height: 152px;
+  object-fit: cover;
+  display: block;
+}
+
+.blog-card .ph {
+  height: 152px;
+}
+
+.blog-card-body {
+  padding: 26px 24px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+
+  flex: 1;
+}
+
+.blog-card h3 {
+  font-family: var(--f-display);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -.02em;
+  line-height: 1.16;
+  color: #d4a82c;
+  text-wrap: pretty;
+}
+
+.blog-card p {
+  font-size: 14px;
+  line-height: 1.55;
+  color: color-mix(
+    in srgb,
+    #fbf8f0 82%,
+    transparent
+  );
+  text-wrap: pretty;
+}
+
+.blog-card .blog-cat {
+  color: color-mix(
+    in srgb,
+    #d4a82c 88%,
+    #fff
+  );
+}
+
+.blog-card .blog-meta {
+  margin-top: auto;
+  padding-top: 6px;
+  color: color-mix(
+    in srgb,
+    #fbf8f0 62%,
+    transparent
+  );
+}
+
+.blog-card.slate {
+  background: #1e2521;
+}
+
+.blog-card.slate:hover {
+  border-color: #d4a82c;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 920px) {
+
+  .blog-feat {
+    grid-template-columns: 1fr;
+  }
+
+  .blog-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+</style>

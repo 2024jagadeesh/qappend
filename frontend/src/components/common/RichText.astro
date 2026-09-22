@@ -1,0 +1,52 @@
+---
+import '../../styles/components/rich-text.css';
+
+const { data } = Astro.props;
+---
+
+<section class="rich-text-section">
+  <div class="rich-text-container">
+
+    {data?.tag && (
+      <div class="tag">
+        {data.tag}
+      </div>
+    )}
+
+    {data?.heading && (
+      <h2 class="h2">
+        {data.heading}
+      </h2>
+    )}
+
+    {data?.content && (
+      <div class="rich-text-content">
+        {data.content.map((block: any) => {
+          if (block._type !== 'block') return null;
+
+          const text = block.children
+            ?.map((child: any) => child.text)
+            .join('');
+
+          return (
+            <p>
+              {text}
+            </p>
+          );
+        })}
+      </div>
+    )}
+
+    {data?.buttonText && (
+      <div class="rich-text-button">
+        <a
+          class="btn btn-primary"
+          href={data?.buttonLink || '#'}
+        >
+          {data.buttonText}
+        </a>
+      </div>
+    )}
+
+  </div>
+</section>

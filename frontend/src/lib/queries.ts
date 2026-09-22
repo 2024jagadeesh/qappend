@@ -265,14 +265,35 @@ _type == "caseStudies" => {
   headingHighlight,
   description,
 
-  items[]{
-    _key,
-    stat,
-    statHighlight,
+  relatedCaseStudies[]->{
+    _id,
     title,
-    description
+    slug,
+    category,
+    subtitle,
+    readTime,
+    featured,
+
+    context{
+      industry,
+      services,
+      timeline,
+      atAGlance
+    },
+
+    metrics[]{
+      value,
+      label
+    }
   },
 
+  buttonText,
+  buttonLink
+},
+_type == "richText" => {
+  tag,
+  heading,
+  content,
   buttonText,
   buttonLink
 },

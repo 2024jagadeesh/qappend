@@ -1,0 +1,709 @@
+---
+import Layout from '../../layouts/MainLayout.astro';
+import { sanityClient } from '../../lib/sanity';
+
+/* =========================================================
+   CASE STUDIES PAGE SETTINGS
+   ========================================================= */
+
+const pageSettings = await sanityClient.fetch(`
+  *[_type == "caseStudiesPage"][0] {
+    breadcrumb {
+      label
+    },
+
+    hero {
+      heading,
+      highlight,
+      description,
+      button {
+        text,
+        link
+      }
+    },
+
+    finalCta {
+      heading,
+      highlight,
+      description,
+
+      primaryButton {
+        text,
+        link
+      },
+
+      secondaryButton {
+        text,
+        link
+      }
+    }
+  }
+`);
+
+/* =========================================================
+   CASE STUDIES
+   ========================================================= */
+
+const caseStudies = await sanityClient.fetch(`
+  *[_type == "caseStudy"] | order(_createdAt desc) {
+    _id,
+    title,
+    slug,
+    category,
+    subtitle,
+    readTime,
+    featured,
+
+    context {
+      industry,
+      services,
+      timeline,
+      atAGlance
+    },
+
+    metrics[] {
+      value,
+      label
+    }
+  }
+`);
+
+/* =========================================================
+   FEATURED CASE STUDY
+   ========================================================= */
+
+const featured =
+  caseStudies.find(
+    (item: any) => item.featured === true
+  ) || caseStudies[0];
+
+/* =========================================================
+   ALL OTHER CASE STUDIES
+   ========================================================= */
+
+const regularCaseStudies = caseStudies.filter(
+  (item: any) => item._id !== featured?._id
+);
+
+/* =========================================================
+   PRIMARY METRIC
+   ========================================================= */
+
+const getPrimaryMetric = (study: any) => {
+  return study?.metrics?.[0] || null;
+};
+---
+
+<Layout title="Case Studies · QuickAppend">
+
+  <!-- =========================================================
+       PAGE HEADER
+       ========================================================== -->
+
+  <section class="page-head">
+
+    <div class="crumb">
+      <a href="/">QuickAppend</a>
+      <span>/</span>
+      <b>
+        {pageSettings?.breadcrumb?.label || 'Case Studies'}
+      </b>
+    </div>
+
+    <h1 class="h1">
+      <span>
+        {pageSettings?.hero?.heading || 'Proof, in'}
+      </span>
+
+      <em>
+        {pageSettings?.hero?.highlight || 'the numbers'}
+      </em>.
+    </h1>
+
+    <p class="lede">
+      {pageSettings?.hero?.description ||
+        'Real deployments across SaaS, services, and enterprise GTM teams. See what we appended, what we enriched, and the measurable lift each team booked once the data was clean.'}
+    </p>
+
+    <div class="hero-actions">
+
+      {
+        pageSettings?.hero?.button?.text && (
+          <a
+            class="btn btn-hot"
+            href={pageSettings.hero.button.link || '/contact'}
+          >
+            {pageSettings.hero.button.text}
+          </a>
+        )
+      }
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================================
+       CASE STUDIES HUB
+       ========================================================== -->
+
+  <section class="cshub">
+
+    <!-- =======================================================
+         FEATURED CASE STUDY
+         ======================================================== -->
+
+    {
+      featured && (
+        <div class="cshub-feat">
+
+          <!-- FEATURED LEFT -->
+
+          <div class="cshub-feat-left">
+
+            <div class="feat-tag">
+              Featured outcome
+            </div>
+
+            {
+              getPrimaryMetric(featured) && (
+                <div class="feat-stat">
+                  {getPrimaryMetric(featured).value}
+                </div>
+              )
+            }
+
+            <h2>
+              {featured.title}
+            </h2>
+
+            <p>
+              {
+                featured.context?.atAGlance ||
+                featured.subtitle ||
+                ''
+              }
+            </p>
+
+            {
+              featured.slug?.current && (
+                <a
+                  class="btn btn-hot"
+                  href={`/case-studies/${featured.slug.current}`}
+                  style="align-self: flex-start; margin-top: 4px;"
+                >
+                  Read full story
+                </a>
+              )
+            }
+
+          </div>
+
+
+          <!-- FEATURED RIGHT -->
+
+          <div class="cshub-feat-right">
+
+            <div class="cshub-quote">
+              {featured.subtitle}
+            </div>
+
+            {
+              featured.category && (
+                <div class="cshub-cite">
+                  {featured.category}
+                </div>
+              )
+            }
+
+            <div class="cshub-meta">
+
+              {
+                featured.context?.industry && (
+                  <span class="cs-pill">
+                    Industry: {featured.context.industry}
+                  </span>
+                )
+              }
+
+              {
+                featured.context?.services && (
+                  <span class="cs-pill">
+                    {featured.context.services}
+                  </span>
+                )
+              }
+
+              {
+                featured.readTime && (
+                  <span class="cs-pill">
+                    {featured.readTime}
+                  </span>
+                )
+              }
+
+            </div>
+
+          </div>
+
+        </div>
+      )
+    }
+
+
+    <!-- =======================================================
+         CASE STUDY GRID
+         ======================================================== -->
+
+    <div class="cshub-grid">
+
+      {
+        regularCaseStudies.map((study: any) => {
+
+          const metric = getPrimaryMetric(study);
+
+          return (
+            <a
+              class="cshub-card"
+              href={
+                study.slug?.current
+                  ? `/case-studies/${study.slug.current}`
+                  : '#'
+              }
+            >
+
+              <!-- Metric -->
+
+              {
+                metric && (
+                  <div class="c-stat">
+                    {metric.value}
+                  </div>
+                )
+              }
+
+
+              <!-- Title -->
+
+              <h3>
+                {study.title}
+              </h3>
+
+
+              <!-- Description -->
+
+              <p>
+                {
+                  metric?.label ||
+                  study.subtitle ||
+                  study.context?.atAGlance ||
+                  ''
+                }
+              </p>
+
+
+              <!-- Footer -->
+
+              <div class="c-foot">
+
+                {
+                  study.context?.industry && (
+                    <span>
+                      {study.context.industry}
+                    </span>
+                  )
+                }
+
+                {
+                  study.context?.services && (
+                    <span>
+                      {study.context.services}
+                    </span>
+                  )
+                }
+
+              </div>
+
+            </a>
+          );
+        })
+      }
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================================
+       FINAL CTA
+       ========================================================== -->
+
+  <section class="final">
+
+    <h2
+      class="h1"
+      style="font-size: clamp(40px, 6vw, 88px);"
+    >
+
+      <span>
+        {pageSettings?.finalCta?.heading || 'Want results like'}
+      </span>
+
+      <em>
+        {pageSettings?.finalCta?.highlight || 'these?'}
+      </em>
+
+    </h2>
+
+    <p
+      class="lede"
+      style="max-width: 60ch;"
+    >
+      {
+        pageSettings?.finalCta?.description ||
+        "Send us a sample of your records. We'll run a free audit and show you exactly what verified completeness could unlock for your team."
+      }
+    </p>
+
+
+    <div class="final-actions">
+
+      {
+        pageSettings?.finalCta?.primaryButton?.text && (
+          <a
+            class="btn btn-primary"
+            href={
+              pageSettings.finalCta.primaryButton.link ||
+              '/contact'
+            }
+          >
+            {pageSettings.finalCta.primaryButton.text}
+          </a>
+        )
+      }
+
+
+      {
+        pageSettings?.finalCta?.secondaryButton?.text && (
+          <a
+            class="btn btn-ghost"
+            href={
+              pageSettings.finalCta.secondaryButton.link ||
+              '/contact'
+            }
+          >
+            {pageSettings.finalCta.secondaryButton.text}
+          </a>
+        )
+      }
+
+    </div>
+
+  </section>
+
+</Layout>
+
+
+<style>
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.page-head {
+  padding: 132px var(--pad-x) 64px;
+  background: var(--paper);
+  display: grid;
+  gap: 22px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.crumb {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.crumb a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.crumb a:hover {
+  color: var(--ink);
+}
+
+.crumb span {
+  color: var(--line);
+}
+
+.crumb b {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.page-head h1 {
+  max-width: 18ch;
+}
+
+.page-head .lede {
+  max-width: 60ch;
+}
+
+
+/* =========================================================
+   CASE STUDIES HUB
+========================================================= */
+
+.cshub {
+  background: var(--paper);
+}
+
+
+/* =========================================================
+   FEATURED CASE STUDY
+========================================================= */
+
+.cshub-feat {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+
+.cshub-feat-left {
+  background: #154a29;
+  color: var(--bone);
+  padding: clamp(36px, 4vw, 60px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.feat-tag {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #d4a82c;
+}
+
+.feat-stat {
+  font-family: var(--f-display);
+  font-size: clamp(64px, 8vw, 108px);
+  font-weight: 700;
+  letter-spacing: -.04em;
+  line-height: .82;
+  color: #d4a82c;
+}
+
+.feat-stat em {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--bone);
+  font-size: .5em;
+}
+
+.cshub-feat-left h2 {
+  font-family: var(--f-display);
+  font-size: clamp(26px, 3vw, 40px);
+  font-weight: 600;
+  letter-spacing: -.03em;
+  line-height: 1.06;
+  color: var(--bone);
+}
+
+.cshub-feat-left p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: color-mix(
+    in srgb,
+    #fbf8f0 80%,
+    transparent
+  );
+  text-wrap: pretty;
+}
+
+
+/* =========================================================
+   FEATURED RIGHT
+========================================================= */
+
+.cshub-feat-right {
+  padding: clamp(36px, 4vw, 60px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 28px;
+}
+
+.cshub-quote {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: clamp(22px, 2.4vw, 30px);
+  line-height: 1.4;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+.cshub-cite {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: .04em;
+  color: var(--muted);
+}
+
+.cshub-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.cs-pill {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: .02em;
+  color: var(--ink-2);
+  background: var(--bone);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 14px;
+}
+
+
+/* =========================================================
+   CASE STUDY GRID
+========================================================= */
+
+.cshub-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+
+/* =========================================================
+   CASE STUDY CARD
+========================================================= */
+
+.cshub-card {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 34px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 320px;
+  background: var(--paper);
+  transition:
+    border-color .2s,
+    transform .2s;
+  text-decoration: none;
+}
+
+.cshub-card:hover {
+  border-color: var(--ink);
+  transform: translateY(-3px);
+}
+
+
+/* =========================================================
+   CARD STAT
+========================================================= */
+
+.c-stat {
+  font-family: var(--f-display);
+  font-size: 58px;
+  font-weight: 700;
+  letter-spacing: -.04em;
+  line-height: .9;
+  color: var(--hot);
+}
+
+.c-stat em {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: .5em;
+  color: var(--ink-2);
+}
+
+
+/* =========================================================
+   CARD TITLE
+========================================================= */
+
+.cshub-card h3 {
+  font-family: var(--f-display);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -.02em;
+  color: var(--ink);
+}
+
+
+/* =========================================================
+   CARD DESCRIPTION
+========================================================= */
+
+.cshub-card p {
+  font-size: 14px;
+  line-height: 1.56;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+
+/* =========================================================
+   CARD FOOTER
+========================================================= */
+
+.c-foot {
+  margin-top: auto;
+  padding-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.c-foot span {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.c-foot span + span::before {
+  content: '·';
+  margin-right: 8px;
+  color: var(--line);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 920px) {
+
+  .cshub-feat {
+    grid-template-columns: 1fr;
+  }
+
+  .cshub-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+</style>

@@ -1,0 +1,1692 @@
+---
+import Layout from '../../layouts/MainLayout.astro';
+import { sanityClient } from '../../lib/sanity';
+
+export async function getStaticPaths() {
+  const studies = await sanityClient.fetch(`
+    *[_type == "caseStudy"]{
+      "slug": slug.current
+    }
+  `);
+
+  return studies.map((study) => ({
+    params: {
+      slug: study.slug,
+    },
+  }));
+}
+
+const { slug } = Astro.params;
+
+const caseStudy = await sanityClient.fetch(
+  `
+    *[_type == "caseStudy" && slug.current == $slug][0]{
+      title,
+      "slug": slug.current,
+      category,
+      subtitle,
+      deployment,
+      readTime,
+
+      context,
+
+      metrics,
+
+      article[],
+
+      relatedCaseStudies[]->{
+        title,
+        "slug": slug.current,
+        category,
+        subtitle,
+        metrics,
+        context
+      }
+    }
+  `,
+  { slug }
+);
+---
+
+<Layout
+  title={
+    caseStudy?.title
+      ? `${caseStudy.title} | QuickAppend`
+      : 'Case Study | QuickAppend'
+  }
+>
+
+  {caseStudy ? (
+
+    <>
+      <!-- =====================================================
+           CASE STUDY HEADER
+      ====================================================== -->
+
+      <section
+        class="page-head"
+        data-screen-label="Case Study · Header"
+      >
+
+        <div class="crumb">
+
+          <a href="/">
+            QuickAppend
+          </a>
+
+          <span>/</span>
+
+          <a href="/case-studies">
+            Case Studies
+          </a>
+
+          <span>/</span>
+
+          <b>
+            {caseStudy.title}
+          </b>
+
+        </div>
+
+
+        <div class="post-cat">
+          {caseStudy.category}
+        </div>
+
+
+        <h1 class="h1">
+
+          {caseStudy.title}
+
+        </h1>
+
+
+        <div class="post-byline">
+
+          {caseStudy.subtitle && (
+            <span>
+              {caseStudy.subtitle}
+            </span>
+          )}
+
+          {caseStudy.deployment && (
+            <>
+              <span class="dot"></span>
+
+              <span>
+                {caseStudy.deployment}
+              </span>
+            </>
+          )}
+
+          {caseStudy.readTime && (
+            <>
+              <span class="dot"></span>
+
+              <span>
+                {caseStudy.readTime}
+              </span>
+            </>
+          )}
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+           ARTICLE
+      ====================================================== -->
+
+      <article
+        class="post"
+        data-screen-label="Case Study · Body"
+      >
+
+
+        <!-- =================================================
+             CONTEXT
+        ================================================== -->
+
+        <div class="cs-context">
+
+          <dl class="cs-facts">
+
+            {caseStudy.context?.industry && (
+              <div class="cs-fact">
+
+                <dt>
+                  Industry
+                </dt>
+
+                <dd>
+                  {caseStudy.context.industry}
+                </dd>
+
+              </div>
+            )}
+
+
+            {caseStudy.context?.team && (
+              <div class="cs-fact">
+
+                <dt>
+                  Team
+                </dt>
+
+                <dd>
+                  {caseStudy.context.team}
+                </dd>
+
+              </div>
+            )}
+
+
+            {caseStudy.context?.targetList && (
+              <div class="cs-fact">
+
+                <dt>
+                  Target list
+                </dt>
+
+                <dd>
+                  {caseStudy.context.targetList}
+                </dd>
+
+              </div>
+            )}
+
+
+            {caseStudy.context?.services && (
+              <div class="cs-fact">
+
+                <dt>
+                  Services
+                </dt>
+
+                <dd>
+                  {caseStudy.context.services}
+                </dd>
+
+              </div>
+            )}
+
+
+            {caseStudy.context?.timeline && (
+              <div class="cs-fact">
+
+                <dt>
+                  Timeline
+                </dt>
+
+                <dd>
+                  {caseStudy.context.timeline}
+                </dd>
+
+              </div>
+            )}
+
+          </dl>
+
+
+          <div>
+
+            <h3>
+              At a glance
+            </h3>
+
+            {caseStudy.context?.atAGlance && (
+              <p>
+                {caseStudy.context.atAGlance}
+              </p>
+            )}
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             RESULTS SNAPSHOT
+        ================================================== -->
+
+        {caseStudy.metrics?.length > 0 && (
+
+          <div
+            class="cs-results"
+            data-screen-label="Case Study · Results"
+          >
+
+            <div class="cs-results-lbl">
+              The outcome, in one quarter
+            </div>
+
+
+            <div class="cs-metrics">
+
+              {caseStudy.metrics.map((metric) => (
+
+                <div class="cs-metric">
+
+                  <div class="cs-metric-stat">
+
+                    {metric.value}
+
+                  </div>
+
+                  <div class="cs-metric-lbl">
+
+                    {metric.label}
+
+                  </div>
+
+                </div>
+
+              ))}
+
+            </div>
+
+          </div>
+
+        )}
+
+
+        <!-- =================================================
+             ARTICLE BODY
+        ================================================== -->
+
+        {caseStudy.article?.length > 0 && (
+
+          <div class="post-body">
+
+            {caseStudy.article.map((block) => (
+
+              <div class="article-block">
+
+
+                <!-- =========================================
+                     PORTABLE TEXT
+                ========================================== -->
+
+                {block._type === 'block' && (
+
+                  <>
+                    {block.style === 'h2' ? (
+
+                      <h2>
+                        {block.children
+                          ?.map((child) => child.text)
+                          .join('')}
+                      </h2>
+
+                    ) : block.style === 'h3' ? (
+
+                      <h3>
+                        {block.children
+                          ?.map((child) => child.text)
+                          .join('')}
+                      </h3>
+
+                    ) : (
+
+                      <p
+                        class={
+                          !caseStudy.article
+                            .slice(0, caseStudy.article.indexOf(block))
+                            .some((item) => item._type === 'block')
+                            ? 'lead-para'
+                            : ''
+                        }
+                      >
+                        {block.children
+                          ?.map((child) => child.text)
+                          .join('')}
+                      </p>
+
+                    )}
+                  </>
+
+                )}
+
+
+                <!-- =========================================
+                     CHALLENGE BOXES
+                ========================================== -->
+
+                {block._type === 'challengeBoxes' && (
+
+                  <ul class="cs-boxes">
+
+                    {block.items?.map((item) => (
+
+                      <li>
+
+                        {item.title && (
+                          <strong>
+                            {item.title}
+                          </strong>
+                        )}
+
+                        {item.description}
+
+                      </li>
+
+                    ))}
+
+                  </ul>
+
+                )}
+
+
+                <!-- =========================================
+                     PULL QUOTE
+                ========================================== -->
+
+                {block._type === 'pullQuote' && (
+
+                  <blockquote class="pullquote">
+
+                    {block.quote}
+
+                    {(block.author || block.role) && (
+
+                      <div class="pullquote-author">
+
+                        {block.author}
+
+                        {block.role && (
+                          <>
+                            <span> · </span>
+                            {block.role}
+                          </>
+                        )}
+
+                      </div>
+
+                    )}
+
+                  </blockquote>
+
+                )}
+
+
+                <!-- =========================================
+                     CASE STUDY CHART
+                ========================================== -->
+
+                {block._type === 'caseStudyChart' && (
+
+                  <figure class="cs-chart cs-chart--dark">
+
+                    <div class="cs-chart-frame">
+
+                      <div class="cs-chart-head">
+
+                        <div class="cs-chart-title">
+                          {block.title}
+                        </div>
+
+                      </div>
+
+
+                      <div class="dynamic-chart">
+
+                        {block.items?.map((item) => (
+
+                          <div class="dynamic-chart-row">
+
+                            <div class="dynamic-chart-label">
+                              {item.label}
+                            </div>
+
+                            <div class="dynamic-chart-track">
+
+                              <div
+                                class="dynamic-chart-bar"
+                                style={`width: ${item.percentage}%`}
+                              ></div>
+
+                            </div>
+
+                            <div class="dynamic-chart-value">
+                              {item.percentage}% · {item.value}
+                            </div>
+
+                          </div>
+
+                        ))}
+
+                      </div>
+
+
+                      <figcaption>
+                        Enrichment turned one undifferentiated list into four workable segments, and flagged the ~18% worth acting on first.
+                      </figcaption>
+
+                    </div>
+
+                  </figure>
+
+                )}
+
+
+                <!-- =========================================
+                     RESULT BOXES
+                ========================================== -->
+
+                {block._type === 'resultBoxes' && (
+
+                  <ul class="cs-boxes cs-boxes--green">
+
+                    {block.items?.map((item) => (
+
+                      <li>
+
+                        {item.title && (
+                          <strong>
+                            {item.title}
+                          </strong>
+                        )}
+
+                        {item.description}
+
+                      </li>
+
+                    ))}
+
+                  </ul>
+
+                )}
+
+
+                <!-- =========================================
+                     COMPARISON CHART
+                ========================================== -->
+
+                {block._type === 'comparisonChart' && (
+
+                  <figure class="cs-chart">
+
+                    <div class="cs-chart-head">
+
+                      <div class="cs-chart-title">
+                        {block.title}
+                      </div>
+
+                      <div class="cs-chart-legend">
+
+                        <span
+                          class="cs-leg"
+                          style="--_c:#cdd4cd"
+                        >
+                          Prior quarter
+                        </span>
+
+                        <span
+                          class="cs-leg"
+                          style="--_c:#154a29"
+                        >
+                          This quarter
+                        </span>
+
+                      </div>
+
+                    </div>
+
+
+                    <div class="cs-chart-frame">
+
+                      <div class="comparison-chart">
+
+                        {block.items?.map((item) => (
+
+                          <div class="comparison-row">
+
+                            <div class="comparison-label">
+                              {item.label}
+                            </div>
+
+                            <div class="comparison-bars">
+
+                              <div class="comparison-bar-group">
+
+                                <span class="comparison-bar-value">
+                                  {item.prior}
+                                </span>
+
+                                <div
+                                  class="comparison-bar prior"
+                                  style={`height: ${Math.min(
+                                    Number(item.prior) / 3,
+                                    100
+                                  )}%`}
+                                ></div>
+
+                              </div>
+
+
+                              <div class="comparison-bar-group">
+
+                                <span class="comparison-bar-value current-value">
+                                  {item.currentDisplay || item.current}
+                                </span>
+
+                                <div
+                                  class="comparison-bar current"
+                                  style={`height: ${Math.min(
+                                    Number(item.current) / 3,
+                                    100
+                                  )}%`}
+                                ></div>
+
+                              </div>
+
+                            </div>
+
+                          </div>
+
+                        ))}
+
+                      </div>
+
+                    </div>
+
+
+                    {block.note && (
+                      <figcaption>
+                        {block.note}
+                      </figcaption>
+                    )}
+
+                  </figure>
+
+                )}
+
+              </div>
+
+            ))}
+
+          </div>
+
+        )}
+
+
+        <!-- =================================================
+             BACK TO CASE STUDIES
+        ================================================== -->
+
+        <div class="post-back">
+
+          <a href="/case-studies">
+            ← Back to all case studies
+          </a>
+
+        </div>
+
+      </article>
+
+
+      <!-- =====================================================
+           CLOSING LINE
+      ====================================================== -->
+
+      <section
+        class="cs-closing"
+        data-screen-label="Case Study · Closing"
+      >
+
+        <p>
+          Technographic and intent enrichment turned a flat,
+          evenly-funded program into a targeting engine, without
+          changing the target list, the creative, or the budget.
+          Just the signal underneath it.
+        </p>
+
+      </section>
+
+
+      <!-- =====================================================
+           RELATED CASE STUDIES
+      ====================================================== -->
+
+      {caseStudy.relatedCaseStudies?.length > 0 && (
+
+        <section
+          class="related"
+          data-screen-label="Case Study · Related"
+        >
+
+          <div class="related-hd">
+
+            <div class="post-cat">
+              Keep exploring
+            </div>
+
+            <h2>
+              More results in <em>the field</em>.
+            </h2>
+
+            <p>
+              Real deployments across SaaS, financial services,
+              and logistics teams, and the measurable lift each
+              one booked.
+            </p>
+
+          </div>
+
+
+          <div class="rel-block slate">
+
+            <div class="rel-label">
+              Related case studies
+            </div>
+
+
+            <div class="rel-grid">
+
+              {caseStudy.relatedCaseStudies.map((related) => (
+
+                <a
+                  class="rel-card"
+                  href={`/case-studies/${related.slug}`}
+                >
+
+                  <div class="rel-type">
+                    {related.category}
+                  </div>
+
+
+                  {related.metrics?.[0] && (
+
+                    <div class="rel-stat">
+
+                      {related.metrics[0].value}
+
+                    </div>
+
+                  )}
+
+
+                  <h3>
+                    {related.title}
+                  </h3>
+
+
+                  {related.metrics?.[0]?.label && (
+
+                    <p>
+                      {related.metrics[0].label}
+                    </p>
+
+                  )}
+
+
+                  {related.subtitle && (
+
+                    <div class="rel-kws">
+
+                      <span class="rel-kw">
+                        {related.subtitle}
+                      </span>
+
+                    </div>
+
+                  )}
+
+                </a>
+
+              ))}
+
+            </div>
+
+          </div>
+
+        </section>
+
+      )}
+
+
+      <!-- =====================================================
+           FINAL CTA
+      ====================================================== -->
+
+      <section
+        class="final"
+        data-screen-label="Case Study · CTA"
+      >
+
+        <h2
+          class="h1"
+          style="font-size: clamp(40px, 6vw, 88px);"
+        >
+          Want results like <em>these?</em>
+        </h2>
+
+
+        <p
+          class="lede"
+          style="max-width: 60ch;"
+        >
+          Send us a sample of your target accounts. We'll run a
+          free audit and show you exactly what technographic and
+          intent enrichment could unlock for your program.
+        </p>
+
+
+        <div class="final-actions">
+
+          <button
+            class="btn btn-primary"
+            data-open-modal
+          >
+            Request free audit
+          </button>
+
+          <button
+            class="btn btn-ghost"
+            data-open-modal
+          >
+            Speak with a specialist
+          </button>
+
+        </div>
+
+      </section>
+
+    </>
+
+  ) : (
+
+    <section class="case-study-not-found">
+
+      <h1>
+        Case Study not found
+      </h1>
+
+      <a href="/case-studies">
+        ← Back to case studies
+      </a>
+
+    </section>
+
+  )}
+
+</Layout>
+
+
+<style>
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.page-head {
+  padding: 132px var(--pad-x) 56px;
+  background: var(--paper);
+  display: grid;
+  gap: 22px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.crumb {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.crumb a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.crumb a:hover {
+  color: var(--ink);
+}
+
+.crumb span {
+  color: var(--line);
+}
+
+.crumb b {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.post-cat {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--hot);
+}
+
+.page-head h1 {
+  max-width: 20ch;
+}
+
+.post-byline {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: .03em;
+  color: var(--muted);
+}
+
+.post-byline .dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--line);
+}
+
+
+/* =========================================================
+   RESULTS
+========================================================= */
+
+.cs-results {
+  max-width: 1040px;
+  margin: 48px auto 0;
+  display: grid;
+  gap: 22px;
+}
+
+.cs-results-lbl {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--hot);
+}
+
+.cs-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.cs-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #154a29;
+  border-radius: 16px;
+  padding: 30px 26px;
+}
+
+.cs-metric-stat {
+  font-family: var(--f-display);
+  font-size: clamp(44px, 4.6vw, 60px);
+  font-weight: 700;
+  letter-spacing: -.04em;
+  line-height: .86;
+  color: #d4a82c;
+}
+
+.cs-metric-lbl {
+  font-size: 14px;
+  line-height: 1.45;
+  color: color-mix(
+    in srgb,
+    #fbf8f0 82%,
+    transparent
+  );
+  text-wrap: pretty;
+}
+
+
+/* =========================================================
+   ARTICLE
+========================================================= */
+
+.post {
+  background: var(--paper);
+  padding-top: 56px;
+}
+
+.cs-context {
+  max-width: 1040px;
+  margin: 56px auto 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+}
+
+.cs-context h3 {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--hot);
+  margin-bottom: 14px;
+}
+
+.cs-context p {
+  font-size: 20px;
+  line-height: 1.62;
+  color: var(--ink-2);
+  text-wrap: pretty;
+  font-style: italic;
+}
+
+.cs-facts {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid #154a29;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.cs-fact {
+  display: grid;
+  grid-template-columns: 44% 1fr;
+  align-items: stretch;
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+}
+
+.cs-fact:last-child {
+  border-bottom: none;
+}
+
+.cs-fact dt {
+  font-family: var(--f-mono);
+  font-size: 15px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: #ffffff;
+  background: #154a29;
+  padding: 17px 20px;
+  display: flex;
+  align-items: center;
+}
+
+.cs-fact dd {
+  font-size: 19px;
+  color: #154a29;
+  font-weight: 700;
+  background: #d4a82c;
+  padding: 17px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.post-body {
+  max-width: 680px;
+  margin: 56px auto 0;
+}
+
+.post-body > * + * {
+  margin-top: 26px;
+}
+
+.post-body p {
+  font-size: 18px;
+  line-height: 1.72;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.post-body .lead-para {
+  font-size: 21px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.post-body h2 {
+  font-family: var(--f-display);
+  font-size: clamp(26px, 2.6vw, 34px);
+  font-weight: 600;
+  letter-spacing: -.03em;
+  line-height: 1.12;
+  color: var(--ink);
+  margin-top: 52px;
+}
+
+.post-body h3 {
+  font-family: var(--f-display);
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -.02em;
+  color: var(--ink);
+  margin-top: 36px;
+}
+
+.post-body strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   PULL QUOTE
+========================================================= */
+
+.pullquote {
+  background: #1e2521;
+  border-left: 4px solid #d4a82c;
+  padding: 32px 36px;
+  margin: 44px 0;
+  border-radius: 14px;
+  font-family: var(--f-display);
+  font-size: clamp(22px, 2.4vw, 30px);
+  font-weight: 500;
+  letter-spacing: -.02em;
+  line-height: 1.28;
+  color: #ffffff;
+  text-wrap: pretty;
+}
+
+.pullquote-author {
+  margin-top: 18px;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  color: #d4a82c;
+}
+
+
+/* =========================================================
+   BOXES
+========================================================= */
+
+.post-body ul.cs-boxes {
+  padding-left: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.cs-boxes li {
+  background: #f0dfa6;
+  border: none;
+  border-radius: 12px;
+  padding: 20px 22px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #1a1a1a;
+}
+
+.cs-boxes li strong {
+  color: #1a1a1a;
+  display: block;
+  margin-bottom: 4px;
+  font-size: 16px;
+}
+
+.cs-boxes--green li {
+  background: #154a29;
+  color: #ffffff;
+}
+
+.cs-boxes--green li strong {
+  color: #ffffff;
+}
+
+
+/* =========================================================
+   DYNAMIC CHART
+========================================================= */
+
+.cs-chart {
+  max-width: 680px;
+  margin: 48px auto;
+}
+
+.cs-chart-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.cs-chart-title {
+  font-family: var(--f-display);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -.02em;
+  color: var(--ink);
+}
+
+.cs-chart-frame {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 26px 26px 22px;
+  background: var(--paper);
+}
+
+.cs-chart--dark .cs-chart-frame {
+  background: #1e2521;
+  border-color: #1e2521;
+}
+
+.cs-chart--dark .cs-chart-title {
+  color: #ffffff;
+}
+
+.cs-chart figcaption {
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  color: var(--muted);
+  letter-spacing: .02em;
+  margin-top: 14px;
+  text-wrap: pretty;
+}
+
+.cs-chart--dark figcaption {
+  color: color-mix(
+    in srgb,
+    #fbf8f0 62%,
+    transparent
+  );
+}
+
+.dynamic-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.dynamic-chart-row {
+  display: grid;
+  grid-template-columns: 130px 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.dynamic-chart-label {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  color: #ffffff;
+}
+
+.dynamic-chart-track {
+  height: 28px;
+  background: rgba(255,255,255,.12);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.dynamic-chart-bar {
+  height: 100%;
+  background: #d4a82c;
+  border-radius: 5px;
+}
+
+.dynamic-chart-value {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: rgba(255,255,255,.72);
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   RESULTS PANEL
+========================================================= */
+
+.cs-results-open {
+  margin-bottom: 0;
+}
+
+.cs-results-box {
+  background: color-mix(
+    in srgb,
+    #154a29 8%,
+    var(--paper)
+  );
+  border: 1.5px solid #154a29;
+  border-radius: 20px;
+  padding: 30px 34px 34px;
+  margin-top: 18px;
+}
+
+.cs-results-box > * + * {
+  margin-top: 22px;
+}
+
+
+/* =========================================================
+   COMPARISON CHART
+========================================================= */
+
+.cs-chart-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cs-leg {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  letter-spacing: .02em;
+  color: var(--muted);
+}
+
+.cs-leg::before {
+  content: "";
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  background: var(--_c, var(--hot));
+}
+
+.comparison-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.comparison-row {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 20px;
+  align-items: end;
+}
+
+.comparison-label {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  color: var(--ink);
+}
+
+.comparison-bars {
+  height: 190px;
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.comparison-bar-group {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+}
+
+.comparison-bar {
+  width: 100%;
+  max-width: 65px;
+  min-height: 8px;
+  border-radius: 4px 4px 0 0;
+}
+
+.comparison-bar.prior {
+  background: #cdd4cd;
+}
+
+.comparison-bar.current {
+  background: #154a29;
+}
+
+.comparison-bar-value {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.current-value {
+  color: #154a29;
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   BACK
+========================================================= */
+
+.post-back {
+  max-width: 680px;
+  margin: 40px auto 64px;
+}
+
+.post-back a {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--hot);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.post-back a:hover {
+  color: var(--ink);
+}
+
+
+/* =========================================================
+   CLOSING
+========================================================= */
+
+.cs-closing {
+  background: #113a20;
+  padding-block: clamp(64px, 8vw, 104px);
+  padding-inline: var(--pad-x);
+}
+
+.cs-closing p {
+  max-width: 1000px;
+  margin: 0 auto;
+  font-family: var(--f-display);
+  font-weight: 600;
+  letter-spacing: -.025em;
+  font-size: clamp(24px, 2.8vw, 32px);
+  line-height: 1.28;
+  color: #ffffff;
+  text-wrap: pretty;
+}
+
+
+/* =========================================================
+   RELATED
+========================================================= */
+
+.related {
+  background: var(--bone);
+  border-top: 1px solid var(--line-soft);
+  padding-top: 56px;
+  padding-bottom: 70px;
+}
+
+.related-hd {
+  max-width: 1040px;
+  margin: 0 auto 38px;
+}
+
+.related-hd h2 {
+  font-family: var(--f-display);
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 600;
+  letter-spacing: -.03em;
+  line-height: 1.08;
+  color: var(--ink);
+  margin-top: 14px;
+  max-width: 22ch;
+}
+
+.related-hd p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin-top: 12px;
+  max-width: 56ch;
+}
+
+.rel-block {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.rel-label {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.rel-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line-soft);
+}
+
+.rel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.rel-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 232px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 26px 24px;
+  background: var(--paper);
+  text-decoration: none;
+  transition:
+    border-color .15s,
+    transform .15s;
+}
+
+.rel-card:hover {
+  border-color: var(--ink);
+  transform: translateY(-3px);
+}
+
+.rel-type {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--hot);
+}
+
+.rel-stat {
+  font-family: var(--f-display);
+  font-size: 46px;
+  font-weight: 700;
+  letter-spacing: -.04em;
+  line-height: .9;
+  color: var(--ink);
+}
+
+.rel-card h3 {
+  font-family: var(--f-display);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -.02em;
+  line-height: 1.16;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+.rel-card p {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.rel-kws {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.rel-kw {
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  letter-spacing: .02em;
+  color: #6b5a17;
+  background: rgba(212,168,44,.18);
+  border: 1px solid rgba(212,168,44,.4);
+  padding: 3px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.rel-block.slate .rel-card {
+  background: #1e2521;
+  border-color: transparent;
+}
+
+.rel-block.slate .rel-card:hover {
+  border-color: #d4a82c;
+}
+
+.rel-block.slate .rel-card h3 {
+  color: #d4a82c;
+}
+
+.rel-block.slate .rel-type {
+  color: color-mix(
+    in srgb,
+    #d4a82c 88%,
+    #fff
+  );
+}
+
+.rel-block.slate .rel-card p {
+  color: color-mix(
+    in srgb,
+    #fbf8f0 82%,
+    transparent
+  );
+}
+
+.rel-block.slate .rel-stat {
+  color: #d4a82c;
+}
+
+.rel-block.slate .rel-kw {
+  color: color-mix(
+    in srgb,
+    #d4a82c 86%,
+    #fff
+  );
+  background: rgba(212,168,44,.16);
+  border-color: rgba(212,168,44,.45);
+}
+
+
+/* =========================================================
+   NOT FOUND
+========================================================= */
+
+.case-study-not-found {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 100px var(--pad-x);
+}
+
+.case-study-not-found a {
+  color: var(--hot);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 920px) {
+
+  .cs-metrics {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .cs-context {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .rel-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+@media (max-width: 700px) {
+
+  .post-body ul.cs-boxes {
+    grid-template-columns: 1fr;
+  }
+
+  .dynamic-chart-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .dynamic-chart-value {
+    white-space: normal;
+  }
+
+  .comparison-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+}
+
+
+@media (max-width: 600px) {
+
+  .page-head {
+    padding-top: 90px;
+  }
+
+  .cs-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .cs-fact {
+    grid-template-columns: 1fr;
+  }
+
+  .cs-fact dd {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .post-body {
+    padding-inline: 20px;
+  }
+
+  .cs-context,
+  .cs-results,
+  .rel-block,
+  .related-hd {
+    padding-inline: 20px;
+  }
+
+  .cs-results {
+    margin-top: 40px;
+  }
+
+  .cs-chart {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .cs-results-box {
+    padding: 22px;
+  }
+
+}
+
+</style>

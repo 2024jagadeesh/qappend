@@ -2,6 +2,8 @@
 import '../../styles/components/case-studies.css';
 
 const { data } = Astro.props;
+
+const caseStudies = data?.relatedCaseStudies || [];
 ---
 
 <section
@@ -24,18 +26,27 @@ const { data } = Astro.props;
   </div>
 
   <div class="cs-grid">
-    {data?.items?.map((item: any) => (
-      <div class="cs">
-        <div class="cs-stat">
-          {item?.stat}
-          {item?.statHighlight && <em>{item.statHighlight}</em>}
+    {caseStudies.map((item: any) => {
+      const metric = item?.metrics?.[0];
+
+      return (
+        <div class="cs">
+
+          <div class="cs-stat">
+            {metric?.value}
+
+            {metric?.label && (
+              <em>{metric.label}</em>
+            )}
+          </div>
+
+          <h4>{item?.title}</h4>
+
+          <p>{item?.subtitle}</p>
+
         </div>
-
-        <h4>{item?.title}</h4>
-
-        <p>{item?.description}</p>
-      </div>
-    ))}
+      );
+    })}
   </div>
 
   <div style="text-align: center;">

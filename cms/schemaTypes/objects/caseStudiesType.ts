@@ -37,53 +37,18 @@ export const caseStudiesType = defineType({
     }),
 
     defineField({
-      name: 'items',
-      title: 'Case Study Results',
+      name: 'relatedCaseStudies',
+      title: 'Related Case Studies',
       type: 'array',
+
       of: [
         {
-          type: 'object',
-          fields: [
-            defineField({
-              name: 'stat',
-              title: 'Stat',
-              type: 'string',
-            }),
-
-            defineField({
-              name: 'statHighlight',
-              title: 'Stat Highlight',
-              type: 'string',
-            }),
-
-            defineField({
-              name: 'title',
-              title: 'Title',
-              type: 'string',
-            }),
-
-            defineField({
-              name: 'description',
-              title: 'Description',
-              type: 'text',
-              rows: 4,
-            }),
-          ],
-
-          preview: {
-            select: {
-              title: 'title',
-              stat: 'stat',
-            },
-            prepare({title, stat}) {
-              return {
-                title: title || 'Case Study',
-                subtitle: stat || '',
-              }
-            },
-          },
+          type: 'reference',
+          to: [{type: 'caseStudy'}],
         },
       ],
+
+      validation: (Rule) => Rule.unique(),
     }),
 
     defineField({

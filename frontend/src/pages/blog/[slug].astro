@@ -1,0 +1,1467 @@
+---
+import Layout from '../../layouts/MainLayout.astro';
+import { sanityClient } from '../../lib/sanity';
+
+export async function getStaticPaths() {
+  const query = `
+    *[_type == "blog" && defined(slug.current)] {
+      "slug": slug.current
+    }
+  `;
+
+  const posts = await sanityClient.fetch(query);
+
+  return posts.map((post: { slug: string }) => ({
+    params: {
+      slug: post.slug,
+    },
+  }));
+}
+
+const { slug } = Astro.params;
+
+const query = `
+  *[_type == "blog" && slug.current == $slug][0] {
+    _id,
+    title,
+    slug,
+    category,
+    excerpt,
+    author,
+    publishedAt,
+    readTime,
+
+    image {
+      asset-> {
+        url
+      },
+      alt
+    },
+
+    leadImageCaption,
+
+    content[] {
+      ...,
+
+      _type == "blogImage" => {
+        ...,
+        asset-> {
+          url
+        }
+      }
+    },
+
+    relatedArticles[]-> {
+      _id,
+      title,
+      slug,
+      category,
+      excerpt,
+      publishedAt,
+      readTime,
+      image {
+        asset-> {
+          url
+        },
+        alt
+      }
+    },
+
+    relatedCaseStudies[]-> {
+      _id,
+      title,
+      slug,
+      category,
+      excerpt,
+      image {
+        asset-> {
+          url
+        },
+        alt
+      }
+    }
+  }
+`;
+
+const post = await sanityClient.fetch(query, { slug });
+
+if (!post) {
+  return Astro.redirect('/404');
+}
+
+const formatDate = (date: string | null) => {
+  if (!date) return '';
+
+  return new Date(date).toLocaleDateString('en-US', {
+    month: 'long',
+    year: 'numeric',
+  });
+};
+---
+
+<Layout title={`${post.title} · QuickAppend`}>
+
+  <!-- =====================================================
+       ARTICLE HEADER
+       ===================================================== -->
+
+  <section class="page-head">
+
+    <div class="crumb">
+      <a href="/">QuickAppend</a>
+      <span>/</span>
+      <a href="/blog">Blog</a>
+      <span>/</span>
+      <b>{post.category}</b>
+    </div>
+
+    {post.category && (
+      <div class="post-cat">
+        {post.category}
+      </div>
+    )}
+
+    <h1>
+      {post.title}
+    </h1>
+
+    <div class="post-byline">
+
+      {post.author && (
+        <span>{post.author}</span>
+      )}
+
+      {post.publishedAt && (
+        <>
+          <span class="dot"></span>
+          <span>{formatDate(post.publishedAt)}</span>
+        </>
+      )}
+
+      {post.readTime && (
+        <>
+          <span class="dot"></span>
+          <span>{post.readTime}</span>
+        </>
+      )}
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       ARTICLE
+       ===================================================== -->
+
+  <article class="post">
+
+
+    <!-- ===================================================
+         LEAD IMAGE
+         =================================================== -->
+
+    {post.image?.asset?.url && (
+      <figure class="post-lead">
+
+        <img
+          src={post.image.asset.url}
+          alt={post.image.alt || post.title}
+          loading="eager"
+        />
+
+        {post.leadImageCaption && (
+          <figcaption>
+            {post.leadImageCaption}
+          </figcaption>
+        )}
+
+      </figure>
+    )}
+
+
+    <!-- ===================================================
+         CONTENT
+         =================================================== -->
+
+    {post.content?.length > 0 && (
+
+      <div class="post-body">
+
+        {post.content.map((block: any, index: number) => {
+
+
+          /* =================================================
+             PORTABLE TEXT
+             ================================================= */
+
+          if (block._type === 'block') {
+
+            const text = block.children
+              ?.map((child: any) => child.text || '')
+              .join('');
+
+            if (!text) {
+              return null;
+            }
+
+
+            /* H2 */
+
+            if (block.style === 'h2') {
+              return (
+                <h2>
+                  {text}
+                </h2>
+              );
+            }
+
+
+            /* H3 */
+
+            if (block.style === 'h3') {
+              return (
+                <h3>
+                  {text}
+                </h3>
+              );
+            }
+
+
+            /* BLOCKQUOTE */
+
+            if (block.style === 'blockquote') {
+              return (
+                <div class="pullquote">
+                  {text}
+                </div>
+              );
+            }
+
+
+            /* NORMAL PARAGRAPH */
+
+            return (
+              <p class={index === 0 ? 'lead-para' : undefined}>
+                {text}
+              </p>
+            );
+          }
+
+
+          /* =================================================
+             PULL QUOTE
+             ================================================= */
+
+          if (block._type === 'pullQuote') {
+
+            return (
+              <div class="pullquote">
+
+                {block.quote && (
+                  <blockquote>
+                    {block.quote}
+                  </blockquote>
+                )}
+
+                {block.author && (
+                  <div class="pullquote-author">
+                    {block.author}
+                  </div>
+                )}
+
+              </div>
+            );
+          }
+
+
+          /* =================================================
+             STEP GRID
+             ================================================= */
+
+          if (block._type === 'stepGrid') {
+
+            return (
+              <div class="step-grid">
+
+                {block.steps?.map(
+                  (step: any, stepIndex: number) => (
+
+                    <div class="step-box">
+
+                      <div class="step-numbadge">
+                        {stepIndex + 1}
+                      </div>
+
+                      <div class="step-txt">
+
+                        {step.title && (
+                          <h4>
+                            {step.title}
+                          </h4>
+                        )}
+
+                        {step.description && (
+                          <p>
+                            {step.description}
+                          </p>
+                        )}
+
+                      </div>
+
+                    </div>
+
+                  )
+                )}
+
+              </div>
+            );
+          }
+
+
+          /* =================================================
+             COMPARISON TABLE
+             ================================================= */
+
+          if (block._type === 'comparisonTable') {
+
+            return (
+              <div class="cmp-table">
+
+                <!-- Header -->
+
+                <div class="cmp-row cmp-head">
+
+                  <div class="cmp-cell">
+                    Dimension
+                  </div>
+
+                  <div class="cmp-cell">
+                    {block.b2bTitle || 'B2B data appending'}
+                  </div>
+
+                  <div class="cmp-cell">
+                    {block.consumerTitle || 'Consumer data'}
+                  </div>
+
+                </div>
+
+
+                <!-- Rows -->
+
+                {block.rows?.map((row: any) => (
+
+                  <div class="cmp-row">
+
+                    <div class="cmp-cell cmp-aspect">
+                      {row.dimension}
+                    </div>
+
+                    <div class="cmp-cell cmp-b2b">
+                      {row.b2b}
+                    </div>
+
+                    <div class="cmp-cell cmp-consumer">
+                      {row.consumer}
+                    </div>
+
+                  </div>
+
+                ))}
+
+              </div>
+            );
+          }
+
+
+          /* =================================================
+             CRITERIA GRID
+             ================================================= */
+
+          if (block._type === 'criteriaGrid') {
+
+            return (
+              <div class="crit-grid">
+
+                {block.items?.map((item: any) => (
+
+                  <div class="crit-box">
+
+                    <div class="crit-hd">
+
+                      <div class="crit-check">
+                        ✓
+                      </div>
+
+                      {item.title && (
+                        <h4>
+                          {item.title}
+                        </h4>
+                      )}
+
+                    </div>
+
+                    {item.description && (
+                      <p>
+                        {item.description}
+                      </p>
+                    )}
+
+                  </div>
+
+                ))}
+
+              </div>
+            );
+          }
+
+
+          /* =================================================
+             ARTICLE IMAGE
+             ================================================= */
+
+          if (
+            block._type === 'blogImage' &&
+            block.asset?.url
+          ) {
+
+            return (
+              <figure class="post-inline">
+
+                <img
+                  src={block.asset.url}
+                  alt={block.alt || post.title}
+                  loading="lazy"
+                />
+
+                {block.caption && (
+                  <figcaption>
+                    {block.caption}
+                  </figcaption>
+                )}
+
+              </figure>
+            );
+          }
+
+
+          /* =================================================
+             BOTTOM LINE
+             ================================================= */
+
+          if (block._type === 'bottomLine') {
+
+            return (
+              <div class="post-end">
+
+                {block.title && (
+                  <strong>
+                    {block.title}
+                  </strong>
+                )}
+
+                {block.text && (
+                  <div>
+                    {block.text}
+                  </div>
+                )}
+
+              </div>
+            );
+          }
+
+
+          return null;
+
+        })}
+
+      </div>
+
+    )}
+
+
+    <!-- ===================================================
+         BACK TO BLOG
+         =================================================== -->
+
+    <div class="post-back">
+
+      <a href="/blog">
+        ← Back to all articles
+      </a>
+
+    </div>
+
+  </article>
+
+
+  <!-- =====================================================
+       RELATED READING
+       ===================================================== -->
+
+  {
+    (
+      post.relatedArticles?.length ||
+      post.relatedCaseStudies?.length
+    ) && (
+
+      <section class="related">
+
+        <div class="related-hd">
+
+          <div class="related-label">
+            Related reading
+          </div>
+
+          <h2>
+            Keep exploring.
+          </h2>
+
+          <p>
+            More practical guides, case studies, and insights
+            from QuickAppend.
+          </p>
+
+        </div>
+
+
+        <!-- ===============================================
+             RELATED ARTICLES
+             =============================================== -->
+
+        {post.relatedArticles?.length > 0 && (
+
+          <div class="rel-block">
+
+            <div class="rel-label">
+              Articles
+            </div>
+
+            <div class="rel-grid">
+
+              {post.relatedArticles.map((article: any) => (
+
+                <a
+                  href={`/blog/${article.slug?.current}`}
+                  class="rel-card"
+                >
+
+                  <div class="rel-type">
+                    {article.category || 'Article'}
+                  </div>
+
+                  <h3>
+                    {article.title}
+                  </h3>
+
+                  {article.excerpt && (
+                    <p>
+                      {article.excerpt}
+                    </p>
+                  )}
+
+                  <div class="rel-kws">
+
+                    {article.publishedAt && (
+                      <span class="rel-kw">
+                        {formatDate(article.publishedAt)}
+                      </span>
+                    )}
+
+                    {article.readTime && (
+                      <span class="rel-kw">
+                        {article.readTime}
+                      </span>
+                    )}
+
+                  </div>
+
+                </a>
+
+              ))}
+
+            </div>
+
+          </div>
+
+        )}
+
+
+        <!-- ===============================================
+             RELATED CASE STUDIES
+             =============================================== -->
+
+        {post.relatedCaseStudies?.length > 0 && (
+
+          <div class="rel-block green">
+
+            <div class="rel-label">
+              Case studies
+            </div>
+
+            <div class="rel-grid">
+
+              {post.relatedCaseStudies.map((study: any) => (
+
+                <a
+                  href={`/case-studies/${study.slug?.current}`}
+                  class="rel-card"
+                >
+
+                  <div class="rel-type">
+                    {study.category || 'Case study'}
+                  </div>
+
+                  <h3>
+                    {study.title}
+                  </h3>
+
+                  {study.excerpt && (
+                    <p>
+                      {study.excerpt}
+                    </p>
+                  )}
+
+                </a>
+
+              ))}
+
+            </div>
+
+          </div>
+
+        )}
+
+      </section>
+
+    )
+  }
+
+
+  <!-- =====================================================
+       FINAL CTA
+       ===================================================== -->
+
+  <section class="final">
+
+    <h2
+      class="h1"
+      style="font-size: clamp(40px, 6vw, 88px);"
+    >
+      <span>Ready to clean up</span>
+      <em>your data?</em>
+    </h2>
+
+    <p
+      class="lede"
+      style="max-width: 60ch;"
+    >
+      Find the gaps in your data and turn them into
+      opportunities for your team.
+    </p>
+
+    <div class="final-actions">
+
+      <a
+        href="/contact"
+        class="btn btn-primary"
+      >
+        Request a free audit
+      </a>
+
+      <a
+        href="/"
+        class="btn btn-ghost"
+      >
+        Back to home
+      </a>
+
+    </div>
+
+  </section>
+
+</Layout>
+
+
+<style>
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.page-head {
+  padding: 132px var(--pad-x) 56px;
+  background: var(--paper);
+  display: grid;
+  gap: 22px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.crumb {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.crumb a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.crumb a:hover {
+  color: var(--ink);
+}
+
+.crumb span {
+  color: var(--line);
+}
+
+.crumb b {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.post-cat {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--hot);
+}
+
+.page-head h1 {
+  max-width: 20ch;
+}
+
+.post-byline {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: .03em;
+  color: var(--muted);
+}
+
+.post-byline .dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--line);
+}
+
+
+/* =========================================================
+   ARTICLE
+   ========================================================= */
+
+.post {
+  background: var(--paper);
+  padding-top: 56px;
+}
+
+
+/* =========================================================
+   LEAD IMAGE
+   ========================================================= */
+
+.post-lead {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.post-lead img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+.post-lead figcaption {
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  color: var(--muted);
+  letter-spacing: .02em;
+  margin-top: 14px;
+  text-align: center;
+}
+
+
+/* =========================================================
+   ARTICLE BODY
+   ========================================================= */
+
+.post-body {
+  max-width: 680px;
+  margin: 56px auto 0;
+}
+
+.post-body > * + * {
+  margin-top: 26px;
+}
+
+.post-body p {
+  font-size: 18px;
+  line-height: 1.72;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.post-body .lead-para {
+  font-size: 21px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.post-body h2 {
+  font-family: var(--f-display);
+  font-size: clamp(26px, 2.6vw, 34px);
+  font-weight: 600;
+  letter-spacing: -.03em;
+  line-height: 1.12;
+  color: var(--ink);
+  margin-top: 52px;
+}
+
+.post-body h3 {
+  font-family: var(--f-display);
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -.02em;
+  color: var(--ink);
+  margin-top: 36px;
+}
+
+.post-body ul {
+  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.post-body li {
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+.post-body li::marker {
+  color: var(--hot);
+}
+
+.post-body strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   STEP BOXES
+   ========================================================= */
+
+.step-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 30px;
+}
+
+.step-box {
+  position: relative;
+  border: 1px solid #154a29;
+  border-radius: 16px;
+  padding: 22px 24px;
+  background: #1f6b3d;
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  transition:
+    border-color .15s,
+    transform .15s;
+}
+
+.step-box:nth-child(1) {
+  width: 64%;
+  margin-left: 0;
+}
+
+.step-box:nth-child(2) {
+  width: 64%;
+  margin-left: 36%;
+}
+
+.step-box:nth-child(3) {
+  width: 64%;
+  margin-left: 0;
+}
+
+.step-box:nth-child(4) {
+  width: 64%;
+  margin-left: 36%;
+}
+
+.step-box:hover {
+  border-color: #d4a82c;
+  transform: translateY(-3px);
+}
+
+.step-numbadge {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #d4a82c;
+  color: #154a29;
+  font-family: var(--f-display);
+  font-size: 18px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+
+.step-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.step-box h4 {
+  font-family: var(--f-display);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -.02em;
+  line-height: 1.1;
+  color: #ffffff;
+}
+
+.step-box p {
+  font-size: 15.5px;
+  line-height: 1.58;
+  color: rgba(255,255,255,0.86);
+  text-wrap: pretty;
+}
+
+
+/* =========================================================
+   COMPARISON TABLE
+   ========================================================= */
+
+.cmp-table {
+  margin-top: 30px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.cmp-row {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1fr;
+}
+
+.cmp-cell {
+  padding: 16px 18px;
+  font-size: 15.5px;
+  line-height: 1.5;
+}
+
+.cmp-aspect {
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--paper-2);
+}
+
+.cmp-b2b {
+  background: #1f6b3d;
+  color: #ffffff;
+}
+
+.cmp-b2b.cmp-cell {
+  border-bottom: 1px solid #154a29;
+}
+
+.cmp-consumer {
+  background: #d4a82c;
+  color: #241c00;
+}
+
+.cmp-consumer.cmp-cell {
+  border-bottom: 1px solid #b08a1f;
+}
+
+.cmp-row:last-child .cmp-b2b.cmp-cell,
+.cmp-row:last-child .cmp-consumer.cmp-cell {
+  border-bottom: none;
+}
+
+.cmp-head .cmp-cell {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  background: #2b2f2d;
+  color: #ffffff;
+  border-bottom: none;
+}
+
+
+/* =========================================================
+   CRITERIA GRID
+   ========================================================= */
+
+.crit-grid {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.crit-box {
+  border: 1px solid #b08a1f;
+  border-radius: 16px;
+  background: #d4a82c;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition:
+    border-color .15s,
+    transform .15s;
+}
+
+.crit-box:hover {
+  border-color: #154a29;
+  transform: translateY(-3px);
+}
+
+.crit-hd {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.crit-check {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: #154a29;
+  color: #d4a82c;
+  font-size: 15px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+
+.crit-box h4 {
+  font-family: var(--f-display);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  line-height: 1.1;
+  color: #241c00;
+}
+
+.crit-box p {
+  font-size: 15px;
+  line-height: 1.56;
+  color: #3d3305;
+  text-wrap: pretty;
+}
+
+
+/* =========================================================
+   SEO KEYWORD HIGHLIGHTS
+   ========================================================= */
+
+.kw-primary {
+  background: #d4a82c;
+  color: #1e2521;
+  padding: .04em .34em;
+  border-radius: 5px;
+  font-weight: 600;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.kw {
+  background: linear-gradient(
+    transparent 60%,
+    rgba(212,168,44,.40) 60%
+  );
+  padding: 0 .04em;
+  border-radius: 2px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.kw em,
+.kw-primary em {
+  font-style: italic;
+}
+
+
+/* =========================================================
+   PULL QUOTE
+   ========================================================= */
+
+.pullquote {
+  border-left: 3px solid var(--hot);
+  padding: 6px 0 6px 28px;
+  margin: 44px 0;
+  font-family: var(--f-display);
+  font-size: clamp(22px, 2.4vw, 30px);
+  font-weight: 500;
+  letter-spacing: -.02em;
+  line-height: 1.28;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+.pullquote blockquote {
+  margin: 0;
+}
+
+.pullquote-author {
+  margin-top: 12px;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+
+/* =========================================================
+   INLINE IMAGE
+   ========================================================= */
+
+.post-inline img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.post-inline figcaption {
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  color: var(--muted);
+  letter-spacing: .02em;
+  margin-top: 12px;
+}
+
+
+/* =========================================================
+   POST END
+   ========================================================= */
+
+.post-end {
+  margin-top: 56px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 18px;
+  color: var(--muted);
+}
+
+.post-end strong {
+  display: block;
+  margin-bottom: 14px;
+  font-family: var(--f-mono);
+  font-style: normal;
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--hot);
+}
+
+
+/* =========================================================
+   BACK TO BLOG
+   ========================================================= */
+
+.post-back {
+  max-width: 680px;
+  margin: 40px auto 64px;
+}
+
+.post-back a {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--hot);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.post-back a:hover {
+  color: var(--ink);
+}
+
+
+/* =========================================================
+   RELATED READING
+   ========================================================= */
+
+.related {
+  background: var(--bone);
+  border-top: 1px solid var(--line-soft);
+  padding-top: 56px;
+  padding-bottom: 80px;
+}
+
+.related-hd {
+  max-width: 1040px;
+  margin: 0 auto 38px;
+}
+
+.related-hd h2 {
+  font-family: var(--f-display);
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 600;
+  letter-spacing: -.03em;
+  line-height: 1.08;
+  color: var(--ink);
+  margin-top: 14px;
+  max-width: 22ch;
+}
+
+.related-hd p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin-top: 12px;
+  max-width: 56ch;
+}
+
+.related-label {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--hot);
+}
+
+.rel-block {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.rel-block + .rel-block {
+  margin-top: 44px;
+}
+
+.rel-label {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.rel-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line-soft);
+}
+
+.rel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.rel-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 232px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 26px 24px;
+  background: var(--paper);
+  text-decoration: none;
+  transition:
+    border-color .15s,
+    transform .15s;
+}
+
+.rel-card:hover {
+  border-color: var(--ink);
+  transform: translateY(-3px);
+}
+
+.rel-type {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--hot);
+}
+
+.rel-card h3 {
+  font-family: var(--f-display);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -.02em;
+  line-height: 1.16;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+.rel-card p {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.rel-kws {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.rel-kw {
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  letter-spacing: .02em;
+  color: #6b5a17;
+  background: rgba(212,168,44,.18);
+  border: 1px solid rgba(212,168,44,.4);
+  padding: 3px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   GREEN RELATED CARDS
+   ========================================================= */
+
+.rel-block.green .rel-card {
+  background: #154a29;
+  border-color: transparent;
+}
+
+.rel-block.green .rel-card:hover {
+  border-color: #d4a82c;
+}
+
+.rel-block.green .rel-card h3 {
+  color: #d4a82c;
+}
+
+.rel-block.green .rel-type {
+  color: color-mix(
+    in srgb,
+    #d4a82c 88%,
+    #fff
+  );
+}
+
+.rel-block.green .rel-card p {
+  color: color-mix(
+    in srgb,
+    #fbf8f0 82%,
+    transparent
+  );
+}
+
+
+/* =========================================================
+   FINAL CTA
+   ========================================================= */
+
+.final {
+  padding: 100px var(--pad-x);
+  background: var(--paper);
+  border-top: 1px solid var(--line-soft);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 24px;
+}
+
+.final h2 {
+  max-width: 18ch;
+}
+
+.final-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 920px) {
+
+  .rel-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .post-lead {
+    padding-left: var(--pad-x);
+    padding-right: var(--pad-x);
+  }
+
+}
+
+
+@media (max-width: 640px) {
+
+  .step-box,
+  .step-box:nth-child(1),
+  .step-box:nth-child(2),
+  .step-box:nth-child(3),
+  .step-box:nth-child(4) {
+    width: 100%;
+    margin-left: 0;
+  }
+
+}
+
+
+@media (max-width: 560px) {
+
+  .cmp-row {
+    grid-template-columns: 1fr;
+  }
+
+  .cmp-head {
+    display: none;
+  }
+
+  .crit-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+</style>

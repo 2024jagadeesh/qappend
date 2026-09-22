@@ -16,6 +16,16 @@ import {servicesCtaType} from './objects/servicesCta'
 import {pageHeroType} from './objects/pageHero'
 import {processType} from './objects/processType'
 import {caseStudiesType} from './objects/caseStudiesType'
+import {caseStudyType} from './caseStudyType'
+import {challengeBoxesType} from './objects/challengeBoxes'
+import {pullQuoteType} from './objects/pullQuoteType'
+import {caseStudyChartType} from './objects/caseStudyChart'
+import {resultBoxesType} from './objects/resultBoxes'
+import {comparisonChartType} from './objects/comparisonChart'
+import {caseStudiesPageType} from './caseStudiesPageType'
+import {blogType} from './blogType'
+import {blogPageType} from './blogPageType'
+import {richTextType} from './objects/richTextType'
 
 export const schemaTypes = [
   siteSettingsType,
@@ -36,4 +46,14 @@ export const schemaTypes = [
   pageHeroType,
   processType,
   caseStudiesType,
+  caseStudyType,
+  challengeBoxesType,
+  pullQuoteType,
+  caseStudyChartType,
+  resultBoxesType,
+  comparisonChartType,
+  caseStudiesPageType,
+  blogType,
+  blogPageType,
+  richTextType,
 ]

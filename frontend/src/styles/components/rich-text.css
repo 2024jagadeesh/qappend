@@ -1,0 +1,30 @@
+.rich-text-section {
+  padding: 100px 0;
+}
+
+.rich-text-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.rich-text-container .tag {
+  margin-bottom: 20px;
+}
+
+.rich-text-content {
+  margin-top: 28px;
+}
+
+.rich-text-content p {
+  margin: 0;
+  line-height: 1.7;
+}
+
+.rich-text-content p + p {
+  margin-top: 20px;
+}
+
+.rich-text-button {
+  margin-top: 32px;
+}

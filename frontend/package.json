@@ -12,6 +12,8 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@portabletext/astro": "^0.2.0",
+    "@portabletext/types": "^4.0.2",
     "@sanity/client": "^8.2.0",
     "astro": "^7.2.4"
   }
