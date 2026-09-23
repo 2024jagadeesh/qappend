@@ -297,6 +297,9 @@ _type == "richText" => {
   buttonText,
   buttonLink
 },
+_type == "customHtml" => {
+  html
+},
 
       )
     }

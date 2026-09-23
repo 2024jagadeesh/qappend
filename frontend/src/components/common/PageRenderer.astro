@@ -17,6 +17,7 @@ import ServicesCta from '../services/ServicesCta.astro';
 import Process from '../process/Process.astro';
 import CaseStudies from '../common/CaseStudies.astro';
 import RichText from '../common/RichText.astro';
+import CustomHtml from './CustomHtml.astro';
 
 interface Props {
   sections?: any[];
@@ -78,6 +79,9 @@ const { sections = [] } = Astro.props;
         return <FinalCta data={section} />;
         case 'richText':
   return <RichText data={section} />;
+
+  case 'customHtml':
+  return <CustomHtml data={section} />;
 
       default:
         console.warn(

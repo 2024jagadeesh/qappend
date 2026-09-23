@@ -78,6 +78,7 @@ export const pageType = defineType({
           type: 'caseStudies',
         },
         {type: 'richText'},
+        {type: 'customHtml'},
       ],
     }),
   ],
