@@ -27,6 +27,8 @@ import {blogType} from './blogType'
 import {blogPageType} from './blogPageType'
 import {richTextType} from './objects/richTextType'
 import {customHtmlType} from './objects/customHtmlType'
+import {whitepaperType} from './whitepaperType'
+import {whitepapersPageType} from './whitepapersPageType'
 
 export const schemaTypes = [
   siteSettingsType,
@@ -58,4 +60,6 @@ export const schemaTypes = [
   blogPageType,
   richTextType,
   customHtmlType,
+  whitepaperType,
+  whitepapersPageType,
 ]
