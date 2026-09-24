@@ -1,0 +1,1891 @@
+---
+import Layout from '../../layouts/MainLayout.astro';
+import { sanityClient } from '../../lib/sanity';
+
+export async function getStaticPaths() {
+  const whitepapers = await sanityClient.fetch(`
+    *[_type == "whitepaper" && defined(slug.current)] {
+      "slug": slug.current
+    }
+  `);
+
+  return whitepapers.map((whitepaper: any) => ({
+    params: {
+      slug: whitepaper.slug,
+    },
+  }));
+}
+
+
+/* =========================================================
+   CURRENT WHITE PAPER
+   ========================================================= */
+
+const { slug } = Astro.params;
+
+const whitepaper = await sanityClient.fetch(
+  `
+    *[_type == "whitepaper" && slug.current == $slug][0] {
+      _id,
+      title,
+      slug,
+      category,
+      description,
+      readTime,
+      featured,
+      publishedAt,
+
+      hero {
+        badge,
+        title,
+        description,
+
+        heroImage {
+          asset-> {
+            url
+          },
+          alt
+        },
+
+        primaryButton {
+          text,
+          link
+        },
+
+        secondaryButton {
+          text,
+          link
+        }
+      },
+
+      problem {
+        eyebrow,
+        heading,
+        description,
+
+        checklist[] {
+          text
+        },
+
+        stats[] {
+          number,
+          label,
+          description
+        }
+      },
+
+      offering {
+        eyebrow,
+        heading,
+        description,
+
+        cards[] {
+          title,
+          description,
+          icon
+        }
+      },
+
+      proof {
+        eyebrow,
+        heading,
+        description,
+
+        metrics[] {
+          value,
+          label,
+          description
+        },
+
+        chart {
+          title,
+          firstLabel,
+          secondLabel,
+
+          items[] {
+            label,
+            firstValue,
+            secondValue
+          },
+
+          note
+        }
+      },
+
+      process {
+        eyebrow,
+        heading,
+        description,
+
+        steps[] {
+          number,
+          label,
+          title,
+          description
+        },
+
+        note
+      },
+
+      output {
+        eyebrow,
+        heading,
+        description,
+
+        image {
+          asset-> {
+            url
+          },
+          alt
+        },
+
+        note
+      },
+
+      trust {
+        eyebrow,
+        heading,
+        description,
+
+        items[] {
+          title,
+          description,
+          icon
+        }
+      },
+
+      cta {
+        eyebrow,
+        heading,
+        description,
+
+        cards[] {
+          title,
+          description,
+          buttonText,
+          buttonAction,
+          buttonLink
+        }
+      }
+    }
+  `,
+  { slug }
+);
+
+if (!whitepaper) {
+  return Astro.redirect('/404');
+}
+
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+const hero = whitepaper.hero;
+const problem = whitepaper.problem;
+const offering = whitepaper.offering;
+const proof = whitepaper.proof;
+const process = whitepaper.process;
+const output = whitepaper.output;
+const trust = whitepaper.trust;
+const cta = whitepaper.cta;
+
+
+/* =========================================================
+   ICON
+   ========================================================= */
+
+const getIcon = (icon: string | undefined) => {
+  switch (icon) {
+    case 'phone':
+      return `
+        <svg viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2
+            19.79 19.79 0 0 1-8.63-3.07
+            19.5 19.5 0 0 1-6-6
+            19.79 19.79 0 0 1-3.07-8.67
+            A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2
+            1.72c.13.96.36 1.9.7 2.81
+            a2 2 0 0 1-.45 2.11L8.09 9.91
+            a16 16 0 0 0 6 6l1.27-1.27
+            a2 2 0 0 1 2.11-.45c.9.34
+            1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+      `;
+
+    case 'email':
+      return `
+        <svg viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="4" width="20" height="16" rx="2"/>
+          <path d="m22 7-8.97 5.7a1.94 1.94
+            0 0 1-2.06 0L2 7"/>
+        </svg>
+      `;
+
+    case 'database':
+      return `
+        <svg viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <ellipse cx="12" cy="5" rx="9" ry="3"/>
+          <path d="M3 5v14a9 3 0 0 0 18 0V5"/>
+          <path d="M3 12a9 3 0 0 0 18 0"/>
+        </svg>
+      `;
+
+    case 'shield':
+      return `
+        <svg viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7
+            c0 6 8 10 8 10z"/>
+        </svg>
+      `;
+
+    case 'bolt':
+      return `
+        <svg viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M13 2 3 14h9l-1 8
+            10-12h-9l1-8z"/>
+        </svg>
+      `;
+
+    case 'refresh':
+      return `
+        <svg viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12a9 9 0 1 1-3-6.7L21 8"/>
+          <path d="M21 3v5h-5"/>
+        </svg>
+      `;
+
+    case 'lock':
+      return `
+        <svg viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      `;
+
+    default:
+      return `
+        <svg viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M12 8v4l3 2"/>
+        </svg>
+      `;
+  }
+};
+---
+
+<Layout title={`${whitepaper.title} · QuickAppend`}>
+
+  <div class="wp-wrap">
+
+    <!-- =====================================================
+         HERO
+         ====================================================== -->
+
+    <section class="wp-hero">
+
+      <div class="wp-hero-inner">
+
+        {
+          hero?.badge && (
+            <span class="wp-badge">
+              {hero.badge}
+            </span>
+          )
+        }
+
+        <h1>
+          {hero?.title || whitepaper.title}
+        </h1>
+
+        <p>
+          {hero?.description || whitepaper.description}
+        </p>
+
+        <div class="wp-hero-actions">
+
+          {
+            hero?.primaryButton?.text && (
+              <a
+                class="btn btn-hot"
+                href={hero.primaryButton.link || '/contact'}
+              >
+                {hero.primaryButton.text}
+              </a>
+            )
+          }
+
+          {
+            hero?.secondaryButton?.text && (
+              <a
+                class="btn btn-ghost"
+                href={hero.secondaryButton.link || '/contact'}
+              >
+                {hero.secondaryButton.text}
+              </a>
+            )
+          }
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         HERO IMAGE
+         ====================================================== -->
+
+    {
+      hero?.heroImage?.asset?.url && (
+        <section class="wp-heroimg-sec">
+
+          <figure class="wp-heroimg">
+
+            <img
+              src={hero.heroImage.asset.url}
+              alt={hero.heroImage.alt || whitepaper.title}
+            />
+
+          </figure>
+
+        </section>
+      )
+    }
+
+
+    <!-- =====================================================
+         PROBLEM / DATA DECAY
+         ====================================================== -->
+
+    {
+      problem && (
+        <section class="wp-sec">
+
+          <div class="wp-split">
+
+            <div>
+
+              {
+                problem.eyebrow && (
+                  <div class="wp-eyebrow">
+                    {problem.eyebrow}
+                  </div>
+                )
+              }
+
+              <h2 class="wp-h2">
+                {problem.heading}
+              </h2>
+
+              {
+                problem.description && (
+                  <p class="wp-lede">
+                    {problem.description}
+                  </p>
+                )
+              }
+
+              {
+                problem.checklist?.length > 0 && (
+                  <div class="wp-checklist">
+
+                    {
+                      problem.checklist.map((item: any) => (
+                        <div class="wp-check-item">
+
+                          <span class="wp-check-mark">
+                            ✓
+                          </span>
+
+                          <p>
+                            {item.text}
+                          </p>
+
+                        </div>
+                      ))
+                    }
+
+                  </div>
+                )
+              }
+
+            </div>
+
+
+            {
+              problem.stats?.length > 0 && (
+                <div class="wp-statstack">
+
+                  {
+                    problem.stats.map((stat: any, index: number) => (
+
+                      <div
+                        class="wp-statcard"
+                        class:list={{
+                          second: index === 1,
+                        }}
+                      >
+
+                        <span class="num">
+                          {stat.number}
+                        </span>
+
+                        <span class="lbl">
+                          {stat.label}
+                        </span>
+
+                        {
+                          stat.description && (
+                            <span class="sub">
+                              {stat.description}
+                            </span>
+                          )
+                        }
+
+                      </div>
+
+                    ))
+                  }
+
+                </div>
+              )
+            }
+
+          </div>
+
+        </section>
+      )
+    }
+
+
+    <!-- =====================================================
+         OFFERING
+         ====================================================== -->
+
+    {
+      offering && (
+        <section class="wp-alt">
+
+          <div class="wp-sec">
+
+            {
+              offering.eyebrow && (
+                <div class="wp-eyebrow">
+                  {offering.eyebrow}
+                </div>
+              )
+            }
+
+            <h2 class="wp-h2">
+              {offering.heading}
+            </h2>
+
+            {
+              offering.description && (
+                <p class="wp-lede">
+                  {offering.description}
+                </p>
+              )
+            }
+
+
+            {
+              offering.cards?.length > 0 && (
+                <div class="wp-cards">
+
+                  {
+                    offering.cards.map((card: any) => (
+
+                      <div class="wp-card">
+
+                        <div class="wp-card-ic"
+                          set:html={getIcon(card.icon)}
+                        />
+
+                        <h3>
+                          {card.title}
+                        </h3>
+
+                        <p>
+                          {card.description}
+                        </p>
+
+                      </div>
+
+                    ))
+                  }
+
+                </div>
+              )
+            }
+
+          </div>
+
+        </section>
+      )
+    }
+
+
+    <!-- =====================================================
+         PROOF / METRICS
+         ====================================================== -->
+
+    {
+      proof && (
+        <section class="wp-sec">
+
+          {
+            proof.eyebrow && (
+              <div class="wp-eyebrow">
+                {proof.eyebrow}
+              </div>
+            )
+          }
+
+          <h2 class="wp-h2">
+            {proof.heading}
+          </h2>
+
+          {
+            proof.description && (
+              <p class="wp-lede">
+                {proof.description}
+              </p>
+            )
+          }
+
+
+          <!-- METRICS -->
+
+          {
+            proof.metrics?.length > 0 && (
+              <div class="wp-metrics">
+
+                {
+                  proof.metrics.map((metric: any) => (
+
+                    <div class="wp-metric">
+
+                      <div class="num">
+                        {metric.value}
+                      </div>
+
+                      <div class="lbl">
+                        {metric.label}
+                      </div>
+
+                      {
+                        metric.description && (
+                          <div class="sub">
+                            {metric.description}
+                          </div>
+                        )
+                      }
+
+                    </div>
+
+                  ))
+                }
+
+              </div>
+            )
+          }
+
+
+          <!-- CHART -->
+
+          {
+            proof.chart?.items?.length > 0 && (
+
+              <div class="wp-chart">
+
+                <div class="wp-chart-hd">
+
+                  <div class="wp-chart-title">
+                    {proof.chart.title}
+                  </div>
+
+                  <div class="wp-legend">
+
+                    <span class="wp-leg wp-leg--qa">
+                      {proof.chart.firstLabel}
+                    </span>
+
+                    <span class="wp-leg wp-leg--ind">
+                      {proof.chart.secondLabel}
+                    </span>
+
+                  </div>
+
+                </div>
+
+
+                <div class="wp-plot">
+
+                  <div class="wp-gridlines">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+
+
+                  <div class="wp-groups">
+
+                    {
+                      proof.chart.items.map((item: any) => {
+
+                        const first =
+                          Number.parseFloat(
+                            String(item.firstValue).replace('%', '')
+                          ) || 0;
+
+                        const second =
+                          Number.parseFloat(
+                            String(item.secondValue).replace('%', '')
+                          ) || 0;
+
+                        return (
+
+                          <div class="wp-group">
+
+                            <div class="wp-bars">
+
+                              <div
+                                class="wp-bar wp-bar--qa"
+                                style={`height: ${first}%;`}
+                              >
+                                <span class="wp-bar-val">
+                                  {item.firstValue}
+                                </span>
+                              </div>
+
+                              <div
+                                class="wp-bar wp-bar--ind"
+                                style={`height: ${second}%;`}
+                              >
+                                <span class="wp-bar-val">
+                                  {item.secondValue}
+                                </span>
+                              </div>
+
+                            </div>
+
+                            <div class="wp-group-lbl">
+                              {item.label}
+                            </div>
+
+                          </div>
+
+                        );
+
+                      })
+                    }
+
+                  </div>
+
+                </div>
+
+              </div>
+            )
+          }
+
+
+          {
+            proof.chart?.note && (
+              <p class="wp-note wp-metrics-note">
+                {proof.chart.note}
+              </p>
+            )
+          }
+
+        </section>
+      )
+    }
+
+
+    <!-- =====================================================
+         PROCESS
+         ====================================================== -->
+
+    {
+      process && (
+        <section class="wp-alt">
+
+          <div class="wp-sec">
+
+            {
+              process.eyebrow && (
+                <div class="wp-eyebrow">
+                  {process.eyebrow}
+                </div>
+              )
+            }
+
+            <h2 class="wp-h2">
+              {process.heading}
+            </h2>
+
+            {
+              process.description && (
+                <p class="wp-lede">
+                  {process.description}
+                </p>
+              )
+            }
+
+
+            {
+              process.steps?.length > 0 && (
+                <div class="wp-flow">
+
+                  {
+                    process.steps.map((step: any, index: number) => (
+
+                      <div class="wp-step">
+
+                        <span class="n">
+                          {step.number || index + 1}
+                        </span>
+
+                        {
+                          step.label && (
+                            <div class="tick">
+                              {step.label}
+                            </div>
+                          )
+                        }
+
+                        <h4>
+                          {step.title}
+                        </h4>
+
+                        <p>
+                          {step.description}
+                        </p>
+
+                      </div>
+
+                    ))
+                  }
+
+                </div>
+              )
+            }
+
+
+            {
+              process.note && (
+                <p class="wp-note wp-flow-note">
+                  {process.note}
+                </p>
+              )
+            }
+
+          </div>
+
+        </section>
+      )
+    }
+
+
+    <!-- =====================================================
+         OUTPUT
+         ====================================================== -->
+
+    {
+      output && (
+        <section class="wp-sec">
+
+          {
+            output.eyebrow && (
+              <div class="wp-eyebrow">
+                {output.eyebrow}
+              </div>
+            )
+          }
+
+          <h2 class="wp-h2">
+            {output.heading}
+          </h2>
+
+          {
+            output.description && (
+              <p class="wp-lede">
+                {output.description}
+              </p>
+            )
+          }
+
+
+          {
+            output.image?.asset?.url && (
+              <figure class="wp-fields-img">
+
+                <img
+                  src={output.image.asset.url}
+                  alt={output.image.alt || output.heading}
+                />
+
+              </figure>
+            )
+          }
+
+
+          {
+            output.note && (
+              <p class="wp-note wp-fields-note">
+                {output.note}
+              </p>
+            )
+          }
+
+        </section>
+      )
+    }
+
+
+    <!-- =====================================================
+         TRUST / WHY TEAMS CHOOSE US
+         ====================================================== -->
+
+    {
+      trust && (
+        <section class="wp-sec">
+
+          {
+            trust.eyebrow && (
+              <div class="wp-eyebrow">
+                {trust.eyebrow}
+              </div>
+            )
+          }
+
+          <h2 class="wp-h2">
+            {trust.heading}
+          </h2>
+
+          {
+            trust.description && (
+              <p class="wp-lede">
+                {trust.description}
+              </p>
+            )
+          }
+
+
+          {
+            trust.items?.length > 0 && (
+              <div class="wp-trust-grid">
+
+                {
+                  trust.items.map((item: any) => (
+
+                    <div class="wp-trust-box">
+
+                      <div
+                        class="wp-trust-ic"
+                        set:html={getIcon(item.icon)}
+                      />
+
+                      <h5>
+                        {item.title}
+                      </h5>
+
+                      <p>
+                        {item.description}
+                      </p>
+
+                    </div>
+
+                  ))
+                }
+
+              </div>
+            )
+          }
+
+        </section>
+      )
+    }
+
+
+    <!-- =====================================================
+         FINAL CTA
+         ====================================================== -->
+
+    {
+      cta && (
+        <section class="wp-cta">
+
+          <div class="wp-sec">
+
+            {
+              cta.eyebrow && (
+                <div
+                  class="wp-eyebrow"
+                  style="color:#d4a82c;"
+                >
+                  {cta.eyebrow}
+                </div>
+              )
+            }
+
+            <h2 class="wp-h2">
+              {cta.heading}
+            </h2>
+
+            {
+              cta.description && (
+                <p class="wp-lede">
+                  {cta.description}
+                </p>
+              )
+            }
+
+
+            {
+              cta.cards?.length > 0 && (
+
+                <div class="wp-cta-grid">
+
+                  {
+                    cta.cards.map((card: any, index: number) => (
+
+                      <div
+                        class:list={{
+                          'wp-cta-card': true,
+                          gold: index === 1,
+                        }}
+                      >
+
+                        <h3>
+                          {card.title}
+                        </h3>
+
+                        <p>
+                          {card.description}
+                        </p>
+
+
+                        {
+                          card.buttonText && (
+                            <a
+                              class:list={{
+                                btn: index === 0,
+                                'btn-hot': index === 0,
+                                'btn-dark': index === 1,
+                              }}
+                              href={
+                                card.buttonLink ||
+                                card.buttonAction ||
+                                '/contact'
+                              }
+                            >
+                              {card.buttonText}
+                            </a>
+                          )
+                        }
+
+                      </div>
+
+                    ))
+                  }
+
+                </div>
+
+              )
+            }
+
+          </div>
+
+        </section>
+      )
+    }
+
+  </div>
+
+</Layout>
+
+
+<style>
+
+/* =========================================================
+   WHITE PAPER
+   ========================================================= */
+
+.wp-wrap {
+  background: var(--paper);
+}
+
+.wp-sec {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: clamp(52px, 6vw, 80px) var(--pad-x);
+}
+
+.wp-eyebrow {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--hot);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.wp-eyebrow::before {
+  content: "";
+  width: 24px;
+  height: 1px;
+  background: var(--hot);
+}
+
+.wp-h2 {
+  font-family: var(--f-display);
+  font-size: clamp(30px, 4vw, 52px);
+  font-weight: 600;
+  letter-spacing: -.035em;
+  line-height: 1.04;
+  color: var(--ink);
+  text-wrap: balance;
+  max-width: 20ch;
+}
+
+.wp-h2 em {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--hot);
+}
+
+.wp-lede {
+  font-size: 19px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  max-width: 62ch;
+  margin-top: 20px;
+  text-wrap: pretty;
+}
+
+.wp-note {
+  font-family: var(--f-mono);
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--muted);
+  letter-spacing: .01em;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.wp-hero {
+  background: #1e2521;
+  color: var(--paper);
+  padding:
+    clamp(120px, 13vw, 168px)
+    var(--pad-x)
+    clamp(64px, 7vw, 96px);
+}
+
+.wp-hero-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: grid;
+  gap: 34px;
+}
+
+.wp-badge {
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #d4a82c;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  background: rgba(212,168,44,.12);
+  border: 1px solid rgba(212,168,44,.32);
+  padding: 7px 14px;
+  border-radius: 999px;
+}
+
+.wp-hero h1 {
+  font-family: var(--f-display);
+  font-size: clamp(40px, 6.4vw, 84px);
+  font-weight: 700;
+  letter-spacing: -.04em;
+  line-height: .98;
+  color: #f4efe6;
+  text-wrap: balance;
+  max-width: 18ch;
+}
+
+.wp-hero h1 em {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 400;
+  color: #d4a82c;
+}
+
+.wp-hero p {
+  font-size: clamp(17px, 1.8vw, 21px);
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--paper) 78%, transparent);
+  max-width: 60ch;
+}
+
+.wp-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 4px;
+}
+
+.wp-hero .btn-hot {
+  background: #d4a82c;
+  color: #1e2521;
+}
+
+.wp-hero .btn-hot:hover {
+  background: #e6bd44;
+  color: #1e2521;
+  transform: translateY(-1px);
+}
+
+.wp-hero .btn-ghost {
+  color: var(--paper);
+  border-color: rgba(255,255,255,.22);
+}
+
+.wp-hero .btn-ghost:hover {
+  border-color: var(--paper);
+  background: rgba(255,255,255,.05);
+}
+
+
+/* =========================================================
+   HERO IMAGE
+   ========================================================= */
+
+.wp-heroimg-sec {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding:
+    clamp(40px, 5vw, 64px)
+    var(--pad-x)
+    0;
+}
+
+.wp-heroimg img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 22px;
+}
+
+
+/* =========================================================
+   PROBLEM + STATS
+   ========================================================= */
+
+.wp-split {
+  display: grid;
+  grid-template-columns: 1.15fr .85fr;
+  gap: clamp(36px, 5vw, 72px);
+  align-items: center;
+}
+
+.wp-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 30px;
+}
+
+.wp-check-item {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+}
+
+.wp-check-mark {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  margin-top: 2px;
+  background: var(--hot);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+
+.wp-check-item p {
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.wp-check-item p strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.wp-statstack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.wp-statcard {
+  border-radius: 18px;
+  padding: 32px 30px;
+  background: #1f6b3d;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wp-statcard.second {
+  background: #d4a82c;
+  color: #241c00;
+}
+
+.wp-statcard .num {
+  font-family: var(--f-display);
+  font-size: clamp(48px, 6vw, 76px);
+  font-weight: 700;
+  letter-spacing: -.04em;
+  line-height: .9;
+}
+
+.wp-statcard .lbl {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.wp-statcard .sub {
+  font-size: 15px;
+  line-height: 1.5;
+  opacity: .88;
+}
+
+
+/* =========================================================
+   OFFERING
+   ========================================================= */
+
+.wp-alt {
+  background: var(--paper-2);
+}
+
+.wp-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 44px;
+}
+
+.wp-card {
+  border: 1px solid #0f3b20;
+  border-radius: 18px;
+  padding: 30px 28px;
+  background: #154a29;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition:
+    border-color .15s,
+    transform .15s;
+}
+
+.wp-card:hover {
+  border-color: #d4a82c;
+  transform: translateY(-4px);
+}
+
+.wp-card-ic {
+  width: 46px;
+  height: 46px;
+  border-radius: 11px;
+  background: #d4a82c;
+  color: #154a29;
+  display: grid;
+  place-items: center;
+  margin-bottom: 6px;
+}
+
+.wp-card-ic svg {
+  width: 23px;
+  height: 23px;
+}
+
+.wp-card h3 {
+  font-family: var(--f-display);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -.02em;
+  color: #fff;
+}
+
+.wp-card p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgba(255,255,255,.85);
+  text-wrap: pretty;
+}
+
+
+/* =========================================================
+   METRICS
+   ========================================================= */
+
+.wp-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-top: 44px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.wp-metric {
+  padding: 34px 28px;
+  border-right: 1px solid var(--line-soft);
+}
+
+.wp-metric:last-child {
+  border-right: none;
+}
+
+.wp-metric .num {
+  font-family: var(--f-display);
+  font-size: clamp(40px, 4.6vw, 60px);
+  font-weight: 700;
+  letter-spacing: -.04em;
+  line-height: .9;
+  color: var(--hot);
+}
+
+.wp-metric .lbl {
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-top: 12px;
+  font-weight: 600;
+}
+
+.wp-metric .sub {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+
+/* =========================================================
+   CHART
+   ========================================================= */
+
+.wp-chart {
+  margin-top: 20px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 30px 30px 26px;
+  background: var(--paper);
+}
+
+.wp-chart-hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.wp-chart-title {
+  font-family: var(--f-display);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.wp-legend {
+  display: flex;
+  gap: 20px;
+}
+
+.wp-leg {
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  letter-spacing: .04em;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wp-leg::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.wp-leg--qa::before {
+  background: #1f6b3d;
+}
+
+.wp-leg--ind::before {
+  background: #d4a82c;
+}
+
+.wp-plot {
+  position: relative;
+  height: 260px;
+}
+
+.wp-gridlines {
+  position: absolute;
+  inset: 0 0 26px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.wp-gridlines span {
+  display: block;
+  height: 1px;
+  background: var(--line-soft);
+}
+
+.wp-groups {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  padding-bottom: 26px;
+}
+
+.wp-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  height: 100%;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+.wp-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  height: 100%;
+}
+
+.wp-bar {
+  position: relative;
+  width: 54px;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  animation: wpGrow .7s cubic-bezier(.22,1,.36,1) both;
+}
+
+.wp-bar--qa {
+  background: linear-gradient(180deg, #237a46, #1f6b3d);
+}
+
+.wp-bar--ind {
+  background: linear-gradient(180deg, #e0b53f, #d4a82c);
+}
+
+.wp-bar-val {
+  font-family: var(--f-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-top: -26px;
+}
+
+.wp-group-lbl {
+  position: absolute;
+  bottom: 0;
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+@keyframes wpGrow {
+  from {
+    height: 0 !important;
+  }
+}
+
+
+/* =========================================================
+   PROCESS
+   ========================================================= */
+
+.wp-flow {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-top: 56px;
+}
+
+.wp-flow::before {
+  content: "";
+  position: absolute;
+  top: 29px;
+  left: 12.5%;
+  right: 12.5%;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--hot) 0 8px,
+    transparent 8px 15px
+  );
+  opacity: .5;
+}
+
+.wp-step {
+  position: relative;
+  padding: 0 18px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wp-step .n {
+  position: relative;
+  z-index: 1;
+  font-family: var(--f-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: var(--hot);
+  margin-bottom: 22px;
+}
+
+.wp-step h4 {
+  font-family: var(--f-display);
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.wp-step p {
+  font-size: 14.5px;
+  line-height: 1.58;
+  color: var(--ink-2);
+  max-width: 24ch;
+}
+
+.wp-step .tick {
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--hot);
+  margin-bottom: 14px;
+}
+
+
+/* =========================================================
+   OUTPUT
+   ========================================================= */
+
+.wp-fields-img {
+  margin-top: 44px;
+}
+
+.wp-fields-img img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 18px;
+}
+
+
+/* =========================================================
+   TRUST
+   ========================================================= */
+
+.wp-trust-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 44px;
+}
+
+.wp-trust-box {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 30px;
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition:
+    border-color .15s,
+    transform .15s;
+}
+
+.wp-trust-box:hover {
+  border-color: var(--hot);
+  transform: translateY(-4px);
+}
+
+.wp-trust-ic {
+  width: 46px;
+  height: 46px;
+  border-radius: 11px;
+  background: color-mix(
+    in srgb,
+    var(--hot) 12%,
+    transparent
+  );
+  color: var(--hot);
+  display: grid;
+  place-items: center;
+}
+
+.wp-trust-ic svg {
+  width: 23px;
+  height: 23px;
+}
+
+.wp-trust-box h5 {
+  font-family: var(--f-display);
+  font-size: 21px;
+  font-weight: 600;
+}
+
+.wp-trust-box p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+
+/* =========================================================
+   CTA
+   ========================================================= */
+
+.wp-cta {
+  background: #1e2521;
+  color: var(--paper);
+}
+
+.wp-cta .wp-h2 {
+  color: #f4efe6;
+}
+
+.wp-cta .wp-lede {
+  color: color-mix(
+    in srgb,
+    var(--paper) 76%,
+    transparent
+  );
+}
+
+.wp-cta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 44px;
+}
+
+.wp-cta-card {
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 20px;
+  padding: 40px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: rgba(255,255,255,.03);
+}
+
+.wp-cta-card.gold {
+  background: #d4a82c;
+  border-color: #d4a82c;
+}
+
+.wp-cta-card h3 {
+  font-family: var(--f-display);
+  font-size: 26px;
+  font-weight: 600;
+  color: #f4efe6;
+}
+
+.wp-cta-card.gold h3 {
+  color: #241c00;
+}
+
+.wp-cta-card p {
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: color-mix(
+    in srgb,
+    var(--paper) 74%,
+    transparent
+  );
+  flex: 1;
+}
+
+.wp-cta-card.gold p {
+  color: #3d3305;
+}
+
+.wp-cta-card .btn {
+  margin-top: 6px;
+  justify-content: center;
+}
+
+.wp-cta-card .btn-hot {
+  background: #d4a82c;
+  color: #1e2521;
+}
+
+.wp-cta-card .btn-dark {
+  background: #1e2521;
+  color: #f4efe6;
+  border-radius: 10px;
+  padding: 14px 26px;
+  font-family: var(--f-mono);
+  font-size: 13px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wp-cta-card .btn-dark::after {
+  content: "→";
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 860px) {
+
+  .wp-split {
+    grid-template-columns: 1fr;
+  }
+
+  .wp-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .wp-metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .wp-metric:nth-child(2) {
+    border-right: none;
+  }
+
+  .wp-flow {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px 20px;
+  }
+
+  .wp-flow::before {
+    display: none;
+  }
+
+  .wp-step {
+    padding: 0 8px;
+  }
+
+  .wp-cta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wp-trust-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+@media (max-width: 520px) {
+
+  .wp-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .wp-metric {
+    border-right: none;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .wp-metric:last-child {
+    border-bottom: none;
+  }
+
+  .wp-bar {
+    width: 38px;
+  }
+
+  .wp-bars {
+    gap: 8px;
+  }
+
+}
+</style>

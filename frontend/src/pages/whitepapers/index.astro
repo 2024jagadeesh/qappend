@@ -1,0 +1,703 @@
+---
+import Layout from '../../layouts/MainLayout.astro';
+import { sanityClient } from '../../lib/sanity';
+
+/* =========================================================
+   WHITE PAPERS PAGE SETTINGS
+   ========================================================= */
+
+const pageSettings = await sanityClient.fetch(`
+  *[_type == "whitepapersPage"][0] {
+    breadcrumb {
+      label
+    },
+
+    hero {
+      heading,
+      highlight,
+      description,
+      button {
+        text,
+        link
+      }
+    },
+
+    finalCta {
+      heading,
+      highlight,
+      description,
+
+      primaryButton {
+        text,
+        link
+      },
+
+      secondaryButton {
+        text,
+        link
+      }
+    }
+  }
+`);
+
+
+/* =========================================================
+   WHITE PAPERS
+   ========================================================= */
+
+const whitepapers = await sanityClient.fetch(`
+  *[_type == "whitepaper"] | order(_createdAt desc) {
+    _id,
+    title,
+    slug,
+    category,
+    description,
+    readTime,
+    featured
+  }
+`);
+
+
+/* =========================================================
+   FEATURED WHITE PAPER
+   ========================================================= */
+
+const featured =
+  whitepapers.find(
+    (item: any) => item.featured === true
+  ) || whitepapers[0];
+
+
+/* =========================================================
+   ALL OTHER WHITE PAPERS
+   ========================================================= */
+
+const regularWhitepapers = whitepapers.filter(
+  (item: any) => item._id !== featured?._id
+);
+---
+
+<Layout title="White Papers · QuickAppend">
+
+  <!-- =========================================================
+       PAGE HEADER
+       ========================================================= -->
+
+  <section class="page-head">
+
+    <div class="crumb">
+
+      <a href="/">QuickAppend</a>
+
+      <span>/</span>
+
+      <b>
+        {pageSettings?.breadcrumb?.label || 'White Papers'}
+      </b>
+
+    </div>
+
+
+    <h1 class="h1">
+
+      <span>
+        {pageSettings?.hero?.heading || 'In-depth playbooks on'}
+      </span>
+
+      <em>
+        {pageSettings?.hero?.highlight || 'B2B data'}
+      </em>.
+
+    </h1>
+
+
+    <p class="lede">
+
+      {pageSettings?.hero?.description ||
+        'Practical guides to data quality, enrichment, verification, and building a more complete B2B record.'}
+
+    </p>
+
+
+    <div class="hero-actions">
+
+      {
+        pageSettings?.hero?.button?.text && (
+          <a
+            class="btn btn-hot"
+            href={pageSettings.hero.button.link || '/contact'}
+          >
+            {pageSettings.hero.button.text}
+          </a>
+        )
+      }
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================================
+       WHITE PAPERS HUB
+       ========================================================= -->
+
+  <section class="wphub">
+
+    <!-- =======================================================
+         FEATURED WHITE PAPER
+         ======================================================== -->
+
+    {
+      featured && (
+
+        <div class="wphub-feat">
+
+          <!-- FEATURED LEFT -->
+
+          <div class="wphub-feat-left">
+
+            <div class="feat-tag">
+              Featured white paper
+            </div>
+
+
+            {
+              featured.readTime && (
+                <div class="feat-stat">
+                  {featured.readTime}
+                </div>
+              )
+            }
+
+
+            <h2>
+              {featured.title}
+            </h2>
+
+
+            <p>
+              {featured.description || ''}
+            </p>
+
+
+            {
+              featured.slug?.current && (
+                <a
+                  class="btn btn-hot"
+                  href={`/whitepapers/${featured.slug.current}`}
+                  style="align-self: flex-start; margin-top: 4px;"
+                >
+                  Read white paper
+                </a>
+              )
+            }
+
+          </div>
+
+
+          <!-- FEATURED RIGHT -->
+
+          <div class="wphub-feat-right">
+
+            {
+              featured.description && (
+                <div class="wphub-quote">
+                  {featured.description}
+                </div>
+              )
+            }
+
+
+            {
+              featured.category && (
+                <div class="wphub-cite">
+                  {featured.category}
+                </div>
+              )
+            }
+
+
+            <div class="wphub-meta">
+
+              {
+                featured.category && (
+                  <span class="wp-pill">
+                    {featured.category}
+                  </span>
+                )
+              }
+
+
+              {
+                featured.readTime && (
+                  <span class="wp-pill">
+                    {featured.readTime}
+                  </span>
+                )
+              }
+
+            </div>
+
+          </div>
+
+        </div>
+
+      )
+    }
+
+
+    <!-- =======================================================
+         WHITE PAPER GRID
+         ======================================================== -->
+
+    {
+      regularWhitepapers.length > 0 && (
+
+        <div class="wphub-grid">
+
+          {
+            regularWhitepapers.map((whitepaper: any) => {
+
+              return (
+
+                <a
+                  class="wphub-card"
+                  href={
+                    whitepaper.slug?.current
+                      ? `/whitepapers/${whitepaper.slug.current}`
+                      : '#'
+                  }
+                >
+
+                  <!-- CATEGORY -->
+
+                  {
+                    whitepaper.category && (
+                      <div class="wp-category">
+                        {whitepaper.category}
+                      </div>
+                    )
+                  }
+
+
+                  <!-- TITLE -->
+
+                  <h3>
+                    {whitepaper.title}
+                  </h3>
+
+
+                  <!-- DESCRIPTION -->
+
+                  <p>
+                    {whitepaper.description || ''}
+                  </p>
+
+
+                  <!-- FOOTER -->
+
+                  <div class="wp-foot">
+
+                    {
+                      whitepaper.readTime && (
+                        <span>
+                          {whitepaper.readTime}
+                        </span>
+                      )
+                    }
+
+                    <span>
+                      White paper
+                    </span>
+
+                  </div>
+
+                </a>
+
+              );
+
+            })
+          }
+
+        </div>
+
+      )
+    }
+
+  </section>
+
+
+  <!-- =========================================================
+       FINAL CTA
+       ========================================================= -->
+
+  <section class="final">
+
+    <h2
+      class="h1"
+      style="font-size: clamp(40px, 6vw, 88px);"
+    >
+
+      <span>
+        {pageSettings?.finalCta?.heading || 'Put the playbook to work'}
+      </span>
+
+      {
+        pageSettings?.finalCta?.highlight && (
+          <>
+            {' '}
+            <em>
+              {pageSettings.finalCta.highlight}
+            </em>
+          </>
+        )
+      }
+
+    </h2>
+
+
+    <p
+      class="lede"
+      style="max-width: 60ch;"
+    >
+
+      {
+        pageSettings?.finalCta?.description ||
+        "A white paper is a start. Request a free audit and we'll show you exactly what's missing in your records right now."
+      }
+
+    </p>
+
+
+    <div class="final-actions">
+
+      {
+        pageSettings?.finalCta?.primaryButton?.text && (
+
+          <a
+            class="btn btn-primary"
+            href={
+              pageSettings.finalCta.primaryButton.link ||
+              '/contact'
+            }
+          >
+            {pageSettings.finalCta.primaryButton.text}
+          </a>
+
+        )
+      }
+
+
+      {
+        pageSettings?.finalCta?.secondaryButton?.text && (
+
+          <a
+            class="btn btn-ghost"
+            href={
+              pageSettings.finalCta.secondaryButton.link ||
+              '/contact'
+            }
+          >
+            {pageSettings.finalCta.secondaryButton.text}
+          </a>
+
+        )
+      }
+
+    </div>
+
+  </section>
+
+</Layout>
+
+
+<style>
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.page-head {
+  padding: 132px var(--pad-x) 64px;
+  background: var(--paper);
+  display: grid;
+  gap: 22px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+
+.crumb {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+.crumb a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+
+.crumb a:hover {
+  color: var(--ink);
+}
+
+
+.crumb span {
+  color: var(--line);
+}
+
+
+.crumb b {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+
+.page-head h1 {
+  max-width: 18ch;
+}
+
+
+.page-head .lede {
+  max-width: 60ch;
+}
+
+
+/* =========================================================
+   WHITE PAPERS HUB
+   ========================================================= */
+
+.wphub {
+  background: var(--paper);
+}
+
+
+/* =========================================================
+   FEATURED WHITE PAPER
+   ========================================================= */
+
+.wphub-feat {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+
+
+.wphub-feat-left {
+  background: #154a29;
+  color: var(--bone);
+  padding: clamp(36px, 4vw, 60px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+
+.feat-tag {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #d4a82c;
+}
+
+
+.feat-stat {
+  font-family: var(--f-display);
+  font-size: clamp(52px, 6vw, 82px);
+  font-weight: 700;
+  letter-spacing: -.04em;
+  line-height: .9;
+  color: #d4a82c;
+}
+
+
+.wphub-feat-left h2 {
+  font-family: var(--f-display);
+  font-size: clamp(26px, 3vw, 40px);
+  font-weight: 600;
+  letter-spacing: -.03em;
+  line-height: 1.06;
+  color: var(--bone);
+}
+
+
+.wphub-feat-left p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: color-mix(
+    in srgb,
+    #fbf8f0 80%,
+    transparent
+  );
+  text-wrap: pretty;
+}
+
+
+/* =========================================================
+   FEATURED RIGHT
+   ========================================================= */
+
+.wphub-feat-right {
+  padding: clamp(36px, 4vw, 60px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 28px;
+}
+
+
+.wphub-quote {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: clamp(22px, 2.4vw, 30px);
+  line-height: 1.4;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+
+.wphub-cite {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: .04em;
+  color: var(--muted);
+}
+
+
+.wphub-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+
+.wp-pill {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: .02em;
+  color: var(--ink-2);
+  background: var(--bone);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 14px;
+}
+
+
+/* =========================================================
+   WHITE PAPER GRID
+   ========================================================= */
+
+.wphub-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+
+/* =========================================================
+   WHITE PAPER CARD
+   ========================================================= */
+
+.wphub-card {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 34px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 320px;
+  background: var(--paper);
+  transition:
+    border-color .2s,
+    transform .2s;
+  text-decoration: none;
+}
+
+
+.wphub-card:hover {
+  border-color: var(--ink);
+  transform: translateY(-3px);
+}
+
+
+.wp-category {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+
+.wphub-card h3 {
+  font-family: var(--f-display);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -.02em;
+  color: var(--ink);
+}
+
+
+.wphub-card p {
+  font-size: 14px;
+  line-height: 1.56;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+
+.wp-foot {
+  margin-top: auto;
+  padding-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+
+.wp-foot span {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+
+.wp-foot span + span::before {
+  content: '·';
+  margin-right: 8px;
+  color: var(--line);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 920px) {
+
+  .wphub-feat {
+    grid-template-columns: 1fr;
+  }
+
+
+  .wphub-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+</style>
