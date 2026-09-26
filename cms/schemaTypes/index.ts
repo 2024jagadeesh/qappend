@@ -29,6 +29,9 @@ import {richTextType} from './objects/richTextType'
 import {customHtmlType} from './objects/customHtmlType'
 import {whitepaperType} from './whitepaperType'
 import {whitepapersPageType} from './whitepapersPageType'
+import {faqType} from './faqType'
+import {useCasesType} from './useCasesType'
+import {contactBookingType} from './contactBookingType'
 
 export const schemaTypes = [
   siteSettingsType,
@@ -62,4 +65,7 @@ export const schemaTypes = [
   customHtmlType,
   whitepaperType,
   whitepapersPageType,
+  faqType,
+  useCasesType,
+  contactBookingType,
 ]

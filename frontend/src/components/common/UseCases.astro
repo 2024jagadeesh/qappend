@@ -1,0 +1,482 @@
+---
+import '../../styles/components/use-cases.css';
+
+interface UseCaseCard {
+  _key?: string;
+  number?: string;
+  team?: string;
+  title: string;
+  slug?: {
+    current: string;
+  };
+  description: string;
+  kicker?: string;
+  kickerHighlight?: string;
+  chips?: string[];
+}
+
+interface UseCaseCluster {
+  _key?: string;
+  kicker?: string;
+  name: string;
+  highlight?: string;
+  description: string;
+  cards?: UseCaseCard[];
+}
+
+interface UseCasesData {
+  tag?: string;
+  heading?: string;
+  clusters?: UseCaseCluster[];
+  cta?: {
+    kicker?: string;
+    heading?: string;
+    headingHighlight?: string;
+    description?: string;
+    buttonText?: string;
+    buttonLink?: string;
+  };
+}
+
+interface Props {
+  data: UseCasesData;
+}
+
+const { data } = Astro.props;
+
+const {
+  tag = 'By team',
+  heading = 'Empowering your teams with actionable data intelligence.',
+  clusters = [],
+  cta,
+} = data ?? {};
+---
+
+<section
+  class="usecases"
+  id="usecases"
+  data-screen-label="07 Use Cases"
+>
+
+  <!-- Section Header -->
+  <div class="uc-hd">
+
+    {tag && (
+      <div class="tag">
+        {tag}
+      </div>
+    )}
+
+    {heading && (
+      <h2 class="h2">
+        {heading}
+      </h2>
+    )}
+
+  </div>
+
+
+  <!-- Use Case Clusters -->
+  {clusters.map((cluster, clusterIndex) => (
+
+    <div
+      class="uc-cluster"
+      data-cluster-index={clusterIndex}
+      data-screen-label={`UC · ${cluster.name}`}
+    >
+
+      <!-- Cluster Header -->
+      <div class="uc-cluster-hd">
+
+        <div class="uc-cluster-side">
+
+          {cluster.kicker && (
+            <span class="uc-cluster-kicker">
+              {cluster.kicker}
+            </span>
+          )}
+
+          <h3 class="uc-cluster-name">
+
+            {cluster.name}
+
+            {cluster.highlight && (
+              <>
+                {' '}
+                <em>{cluster.highlight}</em>
+              </>
+            )}
+
+          </h3>
+
+        </div>
+
+
+        {cluster.description && (
+          <p class="uc-cluster-desc">
+            {cluster.description}
+          </p>
+        )}
+
+      </div>
+
+
+      <!-- Marquee -->
+      <div
+        class="uc-marquee"
+        data-marquee
+      >
+
+        <div class="uc-track">
+
+          {cluster.cards?.map((card, cardIndex) => (
+
+            <article
+              class="uc-card"
+              data-card-index={cardIndex}
+              data-screen-label={`UC · ${card.title}`}
+            >
+
+              <!-- Card Top -->
+              <div class="uc-card-top">
+
+                {card.number && (
+                  <span class="uc-card-ix">
+                    {card.number}
+                  </span>
+                )}
+
+                {card.team && (
+                  <span class="ucf-team">
+                    {card.team}
+                  </span>
+                )}
+
+              </div>
+
+
+              <!-- Card Title -->
+              <h3 class="uc-card-title">
+                {card.title}
+              </h3>
+
+
+              <!-- Description -->
+              {card.description && (
+                <p class="uc-card-desc">
+                  {card.description}
+                </p>
+              )}
+
+
+              <!-- Footer -->
+              <div class="uc-card-foot">
+
+                {card.chips && card.chips.length > 0 ? (
+
+                  <ul class="uc-chips">
+
+                    {card.chips.map((chip) => (
+                      <li>{chip}</li>
+                    ))}
+
+                  </ul>
+
+                ) : (
+
+                  card.kicker && (
+                    <div class="uc-kicker">
+
+                      {card.kicker}
+
+                      {card.kickerHighlight && (
+                        <>
+                          {' '}
+                          <em>{card.kickerHighlight}</em>
+                        </>
+                      )}
+
+                    </div>
+                  )
+
+                )}
+
+              </div>
+
+            </article>
+
+          ))}
+
+        </div>
+
+      </div>
+
+    </div>
+
+  ))}
+
+</section>
+
+
+<!-- Closing CTA -->
+{cta && (
+
+  <section
+    class="uc-cta"
+    data-screen-label="UC · Closing CTA"
+  >
+
+    <div>
+
+      {cta.kicker && (
+        <div class="uc-cta-kicker">
+          {cta.kicker}
+        </div>
+      )}
+
+      {cta.heading && (
+        <h2>
+
+          {cta.heading}
+
+          {cta.headingHighlight && (
+            <>
+              {' '}
+              <em>{cta.headingHighlight}</em>
+            </>
+          )}
+
+        </h2>
+      )}
+
+      {cta.description && (
+        <p>
+          {cta.description}
+        </p>
+      )}
+
+    </div>
+
+
+    {cta.buttonText && (
+      <div class="uc-cta-actions">
+
+        <a
+          href={cta.buttonLink || '#'}
+          class="btn btn-hot"
+        >
+          {cta.buttonText}
+        </a>
+
+      </div>
+    )}
+
+  </section>
+
+)}
+
+
+<!-- =====================================================
+     USE CASE MARQUEE
+     ===================================================== -->
+
+<script>
+  const initUseCaseMarquees = () => {
+
+    const marquees =
+      document.querySelectorAll<HTMLElement>('[data-marquee]');
+
+    marquees.forEach((marquee) => {
+
+      const track =
+        marquee.querySelector<HTMLElement>('.uc-track');
+
+      if (!track) return;
+
+      /*
+       * Prevent initialization more than once.
+       */
+      if (marquee.dataset.marqueeInitialized === 'true') {
+        return;
+      }
+
+      marquee.dataset.marqueeInitialized = 'true';
+
+
+      /*
+       * Clone the original cards.
+       *
+       * This creates the continuous scrolling effect.
+       */
+      const originalCards = Array.from(
+        track.children
+      ) as HTMLElement[];
+
+      originalCards.forEach((card) => {
+
+        const clone = card.cloneNode(true) as HTMLElement;
+
+        clone.setAttribute('aria-hidden', 'true');
+
+        track.appendChild(clone);
+
+      });
+
+
+      /*
+       * Animation state
+       */
+      let position = 0;
+
+      let lastTime = performance.now();
+
+      let paused = false;
+
+      /*
+       * Same approximate speed as the original HTML.
+       */
+      const speed = 55;
+
+
+      /*
+       * Calculate width of the original set.
+       */
+      const getLoopWidth = () => {
+
+        const cards =
+          Array.from(
+            track.children
+          ) as HTMLElement[];
+
+        const half = Math.floor(cards.length / 2);
+
+        const originalSet =
+          cards.slice(0, half);
+
+        if (!originalSet.length) {
+          return 0;
+        }
+
+        const first = originalSet[0];
+
+        const last =
+          originalSet[originalSet.length - 1];
+
+        const firstRect =
+          first.getBoundingClientRect();
+
+        const lastRect =
+          last.getBoundingClientRect();
+
+        return (
+          lastRect.right -
+          firstRect.left +
+          (
+            parseFloat(
+              getComputedStyle(track).gap
+            ) || 0
+          )
+        );
+
+      };
+
+
+      let loopWidth = getLoopWidth();
+
+
+      /*
+       * Recalculate after resize.
+       */
+      const resizeObserver =
+        new ResizeObserver(() => {
+
+          loopWidth = getLoopWidth();
+
+        });
+
+      resizeObserver.observe(track);
+
+
+      /*
+       * Pause when mouse is over the marquee.
+       */
+      marquee.addEventListener(
+        'mouseenter',
+        () => {
+          paused = true;
+        }
+      );
+
+      marquee.addEventListener(
+        'mouseleave',
+        () => {
+          paused = false;
+        }
+      );
+
+
+      /*
+       * Main animation.
+       */
+      const animate = (time: number) => {
+
+        const delta =
+          (time - lastTime) / 1000;
+
+        lastTime = time;
+
+
+        if (!paused && loopWidth > 0) {
+
+          position -= speed * delta;
+
+
+          /*
+           * Once the first set has moved completely
+           * out of view, reset the position.
+           */
+          if (Math.abs(position) >= loopWidth) {
+            position += loopWidth;
+          }
+
+
+          track.style.transform =
+            `translate3d(${position}px, 0, 0)`;
+
+        }
+
+
+        requestAnimationFrame(animate);
+
+      };
+
+
+      /*
+       * Start animation.
+       */
+      requestAnimationFrame(animate);
+
+    });
+
+  };
+
+
+  /*
+   * Astro can execute this script after the DOM
+   * is available, but this also handles the case
+   * where it is loaded after DOMContentLoaded.
+   */
+  if (document.readyState === 'loading') {
+
+    document.addEventListener(
+      'DOMContentLoaded',
+      initUseCaseMarquees,
+      { once: true }
+    );
+
+  } else {
+
+    initUseCaseMarquees();
+
+  }
+</script>

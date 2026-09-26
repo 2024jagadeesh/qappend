@@ -18,6 +18,9 @@ import Process from '../process/Process.astro';
 import CaseStudies from '../common/CaseStudies.astro';
 import RichText from '../common/RichText.astro';
 import CustomHtml from './CustomHtml.astro';
+import FAQ from './FAQ.astro';
+import UseCases from './UseCases.astro';
+import ContactBooking from '../common/ContactBooking.astro';
 
 interface Props {
   sections?: any[];
@@ -82,6 +85,16 @@ const { sections = [] } = Astro.props;
 
   case 'customHtml':
   return <CustomHtml data={section} />;
+
+  case 'faqSection':
+  return <FAQ data={section} />;
+
+  case 'useCases':
+  return <UseCases data={section} />;
+
+  case 'contactBooking':
+  return <ContactBooking />;
+  
 
       default:
         console.warn(

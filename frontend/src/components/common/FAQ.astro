@@ -1,0 +1,104 @@
+---
+import '../../styles/components/faq.css';
+
+interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+interface Props {
+  data: {
+    eyebrow?: string;
+    heading?: string;
+    description?: string;
+    buttonText?: string;
+    buttonAction?: string;
+    items?: FAQItem[];
+  };
+}
+
+const { data } = Astro.props;
+
+const {
+  eyebrow = 'FAQ',
+  heading = 'Answers, straight.',
+  description = 'Still wondering? Drop us a line. A real human (not a chatbot) answers every inbound.',
+  buttonText = 'Ask a specialist',
+  buttonAction = 'modal',
+  items = [],
+} = data ?? {};
+---
+
+<section class="faq" id="faq" data-screen-label="FAQ">
+  <div class="faq-grid">
+
+    <!-- Left Content -->
+    <div>
+      {eyebrow && <div class="tag">{eyebrow}</div>}
+
+      {heading && (
+        <h2 class="h2">
+          {heading}
+        </h2>
+      )}
+
+      {description && (
+        <p class="lede faq-description">
+          {description}
+        </p>
+      )}
+
+      {buttonText && (
+        <div class="faq-button-wrap">
+          <button
+            class="btn btn-primary"
+            type="button"
+            data-open-modal={buttonAction === 'modal' ? '' : undefined}
+          >
+            {buttonText}
+          </button>
+        </div>
+      )}
+    </div>
+
+    <!-- FAQ List -->
+    <div class="faq-list">
+      {items.map((item) => (
+        <div class="faq-item">
+
+          <button
+            type="button"
+            class="faq-q"
+            aria-expanded="false"
+          >
+            <span>{item.question}</span>
+            <span class="faq-toggle">+</span>
+          </button>
+
+          <div class="faq-a">
+            {item.answer}
+          </div>
+
+        </div>
+      ))}
+    </div>
+
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.faq-q').forEach((question) => {
+    question.addEventListener('click', () => {
+      const item = question.closest('.faq-item');
+
+      if (!item) return;
+
+      const isOpen = item.classList.toggle('open');
+
+      question.setAttribute(
+        'aria-expanded',
+        String(isOpen)
+      );
+    });
+  });
+</script>

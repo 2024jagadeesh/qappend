@@ -300,7 +300,54 @@ _type == "richText" => {
 _type == "customHtml" => {
   html
 },
+_type == "faqSection" => {
+  eyebrow,
+  heading,
+  description,
+  buttonText,
+  buttonAction,
 
+  items[]{
+    _key,
+    question,
+    answer
+  }
+},
+_type == "useCases" => {
+  tag,
+  heading,
+
+  clusters[]{
+    _key,
+    kicker,
+    name,
+    highlight,
+    description,
+
+    cards[]{
+      _key,
+      number,
+      team,
+      title,
+      slug{
+        current
+      },
+      description,
+      kicker,
+      kickerHighlight,
+      chips
+    }
+  },
+
+  cta{
+    kicker,
+    heading,
+    headingHighlight,
+    description,
+    buttonText,
+    buttonLink
+  }
+},
       )
     }
   }
