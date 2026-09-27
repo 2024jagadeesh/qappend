@@ -1,0 +1,291 @@
+---
+import '../../styles/shared/audit-modal.css';
+---
+
+<div class="audit-modal" id="audit-modal" aria-hidden="true">
+  <div class="audit-modal-overlay" data-close-modal></div>
+
+  <div
+    class="audit-modal-dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="audit-modal-title"
+  >
+    <button
+      type="button"
+      class="audit-modal-close"
+      aria-label="Close"
+      data-close-modal
+    >
+      ×
+    </button>
+
+    <!-- FORM -->
+    <div class="audit-modal-form-wrap" id="audit-form-wrap">
+      <div class="audit-modal-header">
+        <span class="audit-modal-eyebrow">FREE DATA AUDIT</span>
+
+        <h2 id="audit-modal-title">
+          Request your free audit.
+        </h2>
+
+        <p>
+          Tell us a little about your data and what you're trying to improve.
+          We'll review it and get back to you.
+        </p>
+      </div>
+
+      <form id="audit-form" class="audit-form">
+        <div class="audit-form-grid">
+
+          <!-- Name -->
+          <div class="audit-field">
+            <label for="audit-name">
+              Name <span>*</span>
+            </label>
+
+            <input
+              type="text"
+              id="audit-name"
+              name="name"
+              placeholder="Your name"
+              required
+            />
+          </div>
+
+          <!-- Email -->
+          <div class="audit-field">
+            <label for="audit-email">
+              Work email <span>*</span>
+            </label>
+
+            <input
+              type="email"
+              id="audit-email"
+              name="email"
+              placeholder="you@company.com"
+              required
+            />
+          </div>
+
+          <!-- Phone -->
+          <div class="audit-field">
+            <label for="audit-phone">
+              Phone <span>*</span>
+            </label>
+
+            <input
+              type="tel"
+              id="audit-phone"
+              name="phone"
+              placeholder="+1 555 123 4567"
+              required
+            />
+          </div>
+
+          <!-- Company -->
+          <div class="audit-field">
+            <label for="audit-company">
+              Company
+            </label>
+
+            <input
+              type="text"
+              id="audit-company"
+              name="company"
+              placeholder="Company name"
+            />
+          </div>
+
+        </div>
+
+        <!-- Message -->
+        <div class="audit-field">
+          <label for="audit-message">
+            What are you trying to fix?
+          </label>
+
+          <textarea
+            id="audit-message"
+            name="message"
+            rows="4"
+            placeholder="Tell us about your data, enrichment, deliverability, or other challenge..."
+          ></textarea>
+        </div>
+
+        <!-- Hidden booking values -->
+        <input
+          type="hidden"
+          name="date"
+          value="Free Audit Request"
+        />
+
+        <input
+          type="hidden"
+          name="time"
+          value="Website Audit Request"
+        />
+
+        <div class="audit-form-footer">
+          <p class="audit-form-note">
+            Your information is only used to respond to your request.
+          </p>
+
+          <button
+            type="submit"
+            class="audit-submit"
+            id="audit-submit"
+          >
+            <span class="audit-submit-text">
+              Request Free Audit
+            </span>
+
+            <span class="audit-submit-loading">
+              Sending...
+            </span>
+          </button>
+        </div>
+
+        <div
+          class="audit-form-error"
+          id="audit-form-error"
+          role="alert"
+        ></div>
+      </form>
+    </div>
+
+    <!-- SUCCESS -->
+    <div
+      class="audit-success"
+      id="audit-success"
+      hidden
+    >
+      <div class="audit-success-icon">
+        ✓
+      </div>
+
+      <span class="audit-modal-eyebrow">
+        REQUEST RECEIVED
+      </span>
+
+      <h2>Thanks for reaching out.</h2>
+
+      <p>
+        We've received your audit request. We'll review the information
+        and get back to you shortly.
+      </p>
+
+      <button
+        type="button"
+        class="audit-success-close"
+        data-close-modal
+      >
+        Done
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const modal = document.querySelector('#audit-modal');
+  const form = document.querySelector('#audit-form');
+  const formWrap = document.querySelector('#audit-form-wrap');
+  const success = document.querySelector('#audit-success');
+  const errorBox = document.querySelector('#audit-form-error');
+  const submitButton = document.querySelector('#audit-submit');
+
+  const openModal = () => {
+    if (!modal) return;
+
+    modal.setAttribute('aria-hidden', 'false');
+    modal.classList.add('is-open');
+
+    document.body.classList.add('audit-modal-open');
+
+    const firstInput = modal.querySelector(
+      'input:not([type="hidden"])'
+    ) as HTMLInputElement | null;
+
+    setTimeout(() => {
+      firstInput?.focus();
+    }, 100);
+  };
+
+  const closeModal = () => {
+    if (!modal) return;
+
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+
+    document.body.classList.remove('audit-modal-open');
+  };
+
+  document.addEventListener('click', (event) => {
+    const target = event.target as HTMLElement;
+
+    if (target.closest('[data-open-modal]')) {
+      event.preventDefault();
+      openModal();
+    }
+
+    if (target.closest('[data-close-modal]')) {
+      event.preventDefault();
+      closeModal();
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeModal();
+    }
+  });
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    if (!submitButton) return;
+
+    errorBox!.textContent = '';
+
+    submitButton.classList.add('is-loading');
+    submitButton.setAttribute('disabled', 'true');
+
+    const formData = new FormData(form);
+
+    const payload = Object.fromEntries(formData.entries());
+
+    try {
+      const response = await fetch('/api/contact-booking', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(
+          result.message || 'Unable to submit your request.'
+        );
+      }
+
+      formWrap!.setAttribute('hidden', '');
+      success!.removeAttribute('hidden');
+
+      form.reset();
+
+    } catch (error) {
+      console.error('Audit form error:', error);
+
+      errorBox!.textContent =
+        error instanceof Error
+          ? error.message
+          : 'Something went wrong. Please try again.';
+    } finally {
+      submitButton.classList.remove('is-loading');
+      submitButton.removeAttribute('disabled');
+    }
+  });
+</script>

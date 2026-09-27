@@ -1,0 +1,49 @@
+---
+import '../../styles/shared/page-hero.css';
+import AppendDemo from '../demos/AppendDemo.astro';
+
+interface Props {
+  data: any;
+  showDemo?: boolean;
+}
+
+const { data, showDemo = false } = Astro.props;
+---
+
+<section
+  class="page-head"
+  data-screen-label={`${data?.breadcrumbLabel ?? 'Page'} · Header`}
+>
+  <div class="crumb">
+    <a href="/">QuickAppend</a>
+    <span>/</span>
+    <b>{data?.breadcrumbLabel}</b>
+  </div>
+
+  <h1 class="h1">
+    {data?.heading}
+    {data?.headingHighlight && (
+      <em>{data.headingHighlight}</em>
+    )}.
+  </h1>
+
+  <p class="lede">
+    {data?.description}
+  </p>
+
+  <div class="hero-actions">
+    <button
+      type="button"
+      class="btn btn-hot"
+      data-open-modal
+    >
+      {data?.ctaText ?? 'Request Free Audit'}
+    </button>
+  </div>
+
+  {showDemo && (
+    <div class="head-demo">
+      <AppendDemo />
+    </div>
+  )}
+</section>

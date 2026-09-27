@@ -1,0 +1,103 @@
+/* ============ FINAL CTA ============ */
+
+.final {
+  background: var(--hot);
+  color: var(--bone);
+  padding: 8rem var(--pad-x);
+  display: grid;
+  gap: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.final::before {
+  content: "";
+  position: absolute;
+  right: -5%;
+  top: -50%;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--bone) 22%, transparent) 0%,
+    transparent 70%
+  );
+
+  pointer-events: none;
+}
+
+.final .h1 {
+  color: var(--bone);
+  position: relative;
+}
+
+.final .h1 em {
+  color: var(--ink);
+  font-family: var(--f-serif);
+}
+
+.final .lede {
+  color: color-mix(in srgb, var(--bone) 80%, transparent);
+  position: relative;
+}
+
+.final .final-copy .lede {
+  font-size: clamp(18px, 2.1vw, 30px);
+  line-height: 1.45;
+}
+
+.final-copy {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.final-copy .h1 {
+  line-height: 1.03;
+}
+
+.final-copy .h1,
+.final-copy .lede {
+  transform-origin: left center;
+  transition: transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+  cursor: default;
+  width: fit-content;
+}
+
+.final-copy .h1:hover {
+  transform: scale(1.045);
+}
+
+.final-copy .lede:hover {
+  transform: scale(1.06);
+}
+
+.final-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.final .btn-primary {
+  background: var(--ink);
+  color: var(--bone);
+}
+
+.final .btn-primary:hover {
+  background: var(--bone);
+  color: var(--ink);
+}
+
+.final .btn-ghost {
+  color: var(--bone);
+  border-color: color-mix(in srgb, var(--bone) 30%, transparent);
+}
+
+.final .btn-ghost:hover {
+  border-color: var(--bone);
+  background: color-mix(in srgb, var(--bone) 10%, transparent);
+}

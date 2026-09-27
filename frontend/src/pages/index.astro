@@ -1,6 +1,6 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
-import PageSections from '../components/PageSections.astro';
+import PageRenderer from '../components/shared/PageRenderer.astro';
 
 import { sanityClient } from '../lib/sanity';
 import { PAGE_QUERY } from '../lib/queries';
@@ -14,7 +14,7 @@ const page = await sanityClient.fetch(
 <MainLayout title={page?.title ?? 'QuickAppend'}>
 
   {page ? (
-    <PageSections sections={page.sections} />
+    <PageRenderer sections={page.sections} />
   ) : (
     <h1>Page not found</h1>
   )}

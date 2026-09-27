@@ -1,55 +1,65 @@
-import {siteSettingsType} from './siteSettingsType'
-import {heroType} from './hero'
-import {statsType} from './statsType'
-import {marqueeType} from './marqueeType'
-import {introType} from './introType'
-import {pageType} from './page'
-import {videoBandType} from './videoBandType'
-import {appendingEnrichmentType} from './appendingEnrichmentType'
-import {compareType} from './compareType'
-import {alsoOfferedType} from './alsoOffered'
-import {whyType} from './whyType'
-import {testimonialsType} from './testimonialsType'
-import {finalCtaType} from './finalCta'
-import {serviceListType} from './objects/serviceList'
-import {servicesCtaType} from './objects/servicesCta'
-import {pageHeroType} from './objects/pageHero'
-import {processType} from './objects/processType'
-import {caseStudiesType} from './objects/caseStudiesType'
-import {caseStudyType} from './caseStudyType'
-import {challengeBoxesType} from './objects/challengeBoxes'
-import {pullQuoteType} from './objects/pullQuoteType'
-import {caseStudyChartType} from './objects/caseStudyChart'
-import {resultBoxesType} from './objects/resultBoxes'
-import {comparisonChartType} from './objects/comparisonChart'
-import {caseStudiesPageType} from './caseStudiesPageType'
-import {blogType} from './blogType'
-import {blogPageType} from './blogPageType'
-import {richTextType} from './objects/richTextType'
-import {customHtmlType} from './objects/customHtmlType'
-import {whitepaperType} from './whitepaperType'
-import {whitepapersPageType} from './whitepapersPageType'
-import {faqType} from './faqType'
-import {useCasesType} from './useCasesType'
-import {contactBookingType} from './contactBookingType'
+import {siteSettingsType} from './site/siteSettings'
+import {pageType} from './site/page'
+
+import {heroType} from './home/hero'
+import {statsType} from './home/stats'
+import {marqueeType} from './home/marquee'
+import {introType} from './home/intro'
+import {videoBandType} from './home/videoBand'
+import {appendingEnrichmentType} from './home/appendingEnrichment'
+import {compareType} from './home/compare'
+import {alsoOfferedType} from './home/alsoOffered'
+import {whyType} from './home/why'
+import {testimonialsType} from './home/testimonials'
+
+import {serviceListType} from './services/serviceList'
+import {servicesHeroType} from './services/servicesHero'
+import {servicesCtaType} from './services/servicesCta'
+
+import {processHeroType} from './process/processHero'
+import {processType} from './process/process'
+
+import {caseStudiesType} from './case-studies/caseStudies'
+import {caseStudyType} from './case-studies/caseStudy'
+import {challengeBoxesType} from './case-studies/challengeBoxes'
+import {pullQuoteType} from './case-studies/pullQuote'
+import {caseStudyChartType} from './case-studies/caseStudyChart'
+import {resultBoxesType} from './case-studies/resultBoxes'
+import {comparisonChartType} from './case-studies/comparisonChart'
+import {caseStudiesPageType} from './case-studies/caseStudiesPage'
+
+import {blogType} from './blog/blog'
+import {blogPageType} from './blog/blogPage'
+
+import {whitepaperType} from './whitepapers/whitepaper'
+import {whitepapersPageType} from './whitepapers/whitepapersPage'
+
+import {useCasesType} from './enrichment/useCases'
+
+import {finalCtaType} from './shared/finalCta'
+import {pageHeroType} from './shared/pageHero'
+import {richTextType} from './shared/richText'
+import {customHtmlType} from './shared/customHtml'
+import {faqType} from './shared/faq'
+import {contactBookingType} from './shared/contactBooking'
 
 export const schemaTypes = [
   siteSettingsType,
+  pageType,
   heroType,
   statsType,
   marqueeType,
   introType,
-  pageType,
   videoBandType,
   appendingEnrichmentType,
   compareType,
   alsoOfferedType,
   whyType,
   testimonialsType,
-  finalCtaType,
   serviceListType,
+  servicesHeroType,
   servicesCtaType,
-  pageHeroType,
+  processHeroType,
   processType,
   caseStudiesType,
   caseStudyType,
@@ -61,11 +71,13 @@ export const schemaTypes = [
   caseStudiesPageType,
   blogType,
   blogPageType,
-  richTextType,
-  customHtmlType,
   whitepaperType,
   whitepapersPageType,
-  faqType,
   useCasesType,
+  finalCtaType,
+  pageHeroType,
+  richTextType,
+  customHtmlType,
+  faqType,
   contactBookingType,
 ]

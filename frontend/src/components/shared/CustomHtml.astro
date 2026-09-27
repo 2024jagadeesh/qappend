@@ -1,0 +1,48 @@
+---
+import EnrichDemo from '../demos/EnrichDemo.astro';
+import CoverageDemo from '../demos/CoverageDemo.astro';
+import EnrichSignal from '../demos/EnrichSignal.astro';
+
+interface Props {
+  data: {
+    html?: string;
+  };
+}
+
+const { data } = Astro.props;
+
+const html = data?.html || '';
+
+const hasAppendDemo = html.includes('data-demo="append"');
+const hasCoverageDemo = html.includes('data-demo="coverage"');
+const hasEnrichmentDemo = html.includes('data-demo="enrichment"');
+---
+
+{hasAppendDemo ? (
+  <section
+    class="demoband"
+    data-screen-label="01a Live demo"
+  >
+    <div class="demoband-inner">
+      <EnrichDemo />
+    </div>
+  </section>
+) : hasCoverageDemo ? (
+  <section
+    class="svcpage"
+    data-screen-label="Services · Match rates"
+    style="padding-top: 0; padding-bottom: 0;"
+  >
+    <CoverageDemo />
+  </section>
+) : hasEnrichmentDemo ? (
+  <section
+    class="svcpage"
+    data-screen-label="Enrichment · Live demo"
+    style="padding-top: 0; padding-bottom: 0;"
+  >
+    <EnrichSignal />
+  </section>
+) : (
+  <Fragment set:html={html} />
+)}

@@ -1,0 +1,50 @@
+---
+import '../../styles/shared/final-cta.css';
+
+interface Props {
+  data: any;
+}
+
+const { data } = Astro.props;
+---
+
+<section class="final" data-screen-label="12 Final CTA">
+  <div class="final-copy">
+    <h2
+      class="h1"
+      style="font-size: clamp(52px, 8.5vw, 132px);"
+    >
+      <span style="color: #cda027; font-size: 72px;">
+        {data?.heading}
+        <em>{data?.headingHighlight}</em>
+        {data?.headingEnding}
+      </span>
+    </h2>
+
+    <p
+      class="lede"
+      style="max-width: 663px; width: 663px;"
+    >
+      {data?.description}
+    </p>
+  </div>
+
+  <div class="final-actions">
+    {
+      data?.buttons?.map((button: any) => (
+        <button
+          type="button"
+          class:list={[
+            'btn',
+            button?.style === 'primary'
+              ? 'btn-primary'
+              : 'btn-ghost'
+          ]}
+          data-open-modal
+        >
+          {button?.text}
+        </button>
+      ))
+    }
+  </div>
+</section>

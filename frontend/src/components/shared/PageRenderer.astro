@@ -1,0 +1,114 @@
+---
+import Hero from '../../features/home/components/Hero.astro';
+import Stats from '../../features/home/components/Stats.astro';
+import Marquee from '../../features/home/components/Marquee.astro';
+import Intro from '../../features/home/components/Intro.astro';
+import VideoBand from '../../features/home/components/VideoBand.astro';
+import AppendingEnrichment from '../../features/home/components/AppendingEnrichment.astro';
+import AlsoOffered from '../../features/home/components/AlsoOffered.astro';
+import Compare from '../../features/home/components/Compare.astro';
+import Why from '../../features/home/components/Why.astro';
+import Testimonials from '../../features/home/components/Testimonials.astro';
+import FinalCta from './FinalCta.astro';
+
+import PageHero from './PageHero.astro';
+import ServicesList from '../../features/services/components/ServicesList.astro';
+import ServicesCta from '../../features/services/components/ServicesCta.astro';
+import Process from '../../features/process/components/Process.astro';
+import CaseStudies from '../../features/case-studies/components/CaseStudies.astro';
+import RichText from './RichText.astro';
+import CustomHtml from './CustomHtml.astro';
+import FAQ from './FAQ.astro';
+import UseCases from '../../features/enrichment/components/UseCases.astro';
+import ContactBooking from './ContactBooking.astro';
+
+interface Props {
+  sections?: any[];
+  showServicesDemo?: boolean;
+}
+
+const {
+  sections = [],
+  showServicesDemo = false,
+} = Astro.props;
+---
+
+{
+  sections.map((section) => {
+    switch (section._type) {
+
+      case 'hero':
+        return <Hero data={section} />;
+
+      case 'pageHero':
+        return <PageHero
+      data={section}
+      showDemo={showServicesDemo}
+    />;
+
+      case 'stats':
+        return <Stats data={section} />;
+
+      case 'marquee':
+        return <Marquee data={section} />;
+
+      case 'intro':
+        return <Intro data={section} />;
+
+      case 'videoBand':
+        return <VideoBand data={section} />;
+
+      case 'appendingEnrichment':
+        return <AppendingEnrichment data={section} />;
+
+      case 'alsoOffered':
+        return <AlsoOffered data={section} />;
+
+      case 'compare':
+        return <Compare data={section} />;
+
+      case 'why':
+        return <Why data={section} />;
+
+      case 'testimonials':
+        return <Testimonials data={section} />;
+
+      case 'serviceList':
+        return <ServicesList data={section} />;
+
+      case 'servicesCta':
+        return <ServicesCta data={section} />;
+
+      case 'process':
+        return <Process data={section} />;
+
+      case 'caseStudies':
+        return <CaseStudies data={section} />;
+
+      case 'finalCta':
+        return <FinalCta data={section} />;
+        case 'richText':
+  return <RichText data={section} />;
+
+  case 'customHtml':
+  return <CustomHtml data={section} />;
+
+  case 'faqSection':
+  return <FAQ data={section} />;
+
+  case 'useCases':
+  return <UseCases data={section} />;
+
+  case 'contactBooking':
+  return <ContactBooking />;
+  
+
+      default:
+        console.warn(
+          `Unknown Sanity section type: ${section._type}`
+        );
+
+        return null;
+    }
+  })
+}

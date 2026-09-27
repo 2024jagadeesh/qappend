@@ -170,6 +170,7 @@ export const PAGE_QUERY = `
         _type == "finalCta" => {
           heading,
           headingHighlight,
+          headingEnding,
           description,
 
           buttons[]{

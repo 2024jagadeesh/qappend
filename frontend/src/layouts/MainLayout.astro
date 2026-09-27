@@ -1,6 +1,7 @@
 ---
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
+import AuditModal from '../components/shared/AuditModal.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -36,5 +37,6 @@ const {
       <slot />
 
     <Footer />
+    <AuditModal />
   </body>
 </html>
