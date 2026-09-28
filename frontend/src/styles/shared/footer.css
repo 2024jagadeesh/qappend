@@ -137,3 +137,161 @@ footer {
 .ft-legal a:hover {
   color: var(--hot);
 }
+
+/* =========================================================
+   FOOTER — RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1000px) {
+  footer {
+    padding: 64px 5vw 28px;
+  }
+
+  .ft-top {
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: 40px;
+    padding-bottom: 48px;
+  }
+
+  .ft-brand {
+    grid-column: 1 / -1;
+  }
+
+  .ft-brand p {
+    max-width: 420px;
+  }
+
+  .ft-mark {
+    padding: 48px 0 20px;
+  }
+
+  .ft-bottom {
+    gap: 20px;
+  }
+}
+
+/* =========================================================
+   FOOTER — MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+  footer {
+    padding: 56px 20px 24px;
+  }
+
+  /* Footer columns */
+  .ft-top {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 36px 24px;
+
+    padding-bottom: 40px;
+  }
+
+  /* Brand takes full width */
+  .ft-brand {
+    grid-column: 1 / -1;
+  }
+
+  .ft-brand p {
+    max-width: 100%;
+    margin-top: 14px;
+
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* Column headings */
+  .ft-col h5 {
+    margin-bottom: 14px;
+  }
+
+  /* Footer links */
+  .ft-col ul {
+    gap: 9px;
+  }
+
+  .ft-col a {
+    font-size: 13px;
+  }
+
+  /* Large QuickAppend mark */
+  .ft-mark {
+    padding: 44px 0 20px;
+
+    font-size: clamp(28px, 9vw, 42px);
+
+    text-align: left;
+
+    line-height: 0.9;
+  }
+
+  /* Bottom footer */
+  .ft-bottom {
+    display: flex;
+    flex-direction: column;
+
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    gap: 14px;
+
+    padding-top: 24px;
+
+    font-size: 10px;
+    line-height: 1.5;
+  }
+
+  .ft-legal {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 12px 18px;
+  }
+}
+
+/* =========================================================
+   FOOTER — SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 420px) {
+  footer {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .ft-top {
+    grid-template-columns: 1fr;
+
+    gap: 30px;
+  }
+
+  .ft-brand {
+    grid-column: auto;
+  }
+
+  .ft-col {
+    width: 100%;
+  }
+
+  .ft-col h5 {
+    margin-bottom: 12px;
+  }
+
+  .ft-mark {
+    padding-top: 36px;
+
+    font-size: 32px;
+
+    text-align: left;
+  }
+
+  .ft-bottom {
+    gap: 12px;
+  }
+
+  .ft-legal {
+    gap: 10px 16px;
+  }
+}
