@@ -4,6 +4,9 @@ import { sanityClient } from '../../lib/sanity';
 import { SITE_SETTINGS_QUERY } from '../../lib/queries';
 
 const settings = await sanityClient.fetch(SITE_SETTINGS_QUERY);
+
+const navigation = settings?.navigation || [];
+const currentPath = Astro.url.pathname;
 ---
 
 <nav class="nav">
@@ -27,100 +30,73 @@ const settings = await sanityClient.fetch(SITE_SETTINGS_QUERY);
   <!-- Navigation -->
   <ul class="nav-links">
 
-    <!-- Services -->
-    <li class="nav-item">
+    {navigation.map((item: any) => {
 
-      <button
-        type="button"
-        class="nav-trigger"
-        aria-haspopup="true"
-      >
-        Services
-      </button>
+      /* ================================
+         DROPDOWN
+      ================================= */
+      if (item.type === 'dropdown') {
+        return (
+          <li class="nav-item">
 
-      <div class="nav-menu">
-        <div class="nav-menu-inner">
+            <button
+              type="button"
+              class="nav-trigger"
+              aria-haspopup="true"
+            >
+              {item.label}
+            </button>
 
-          <a href="/services/">
-            <span>Append</span>
-            <small>Complete the record, field by field</small>
+            <div
+              class:list={[
+                'nav-menu',
+                item.dropdownStyle === 'right' && 'nav-menu--right'
+              ]}
+            >
+              <div class="nav-menu-inner">
+
+                {item.items?.map((subItem: any) => (
+                  <a
+                    href={subItem.link || '#'}
+                    class:list={[
+                      currentPath === subItem.link && 'active'
+                    ]}
+                  >
+                    <span>{subItem.label}</span>
+
+                    {subItem.description && (
+                      <small>
+                        {subItem.description}
+                      </small>
+                    )}
+                  </a>
+                ))}
+
+              </div>
+            </div>
+
+          </li>
+        );
+      }
+
+
+      /* ================================
+         NORMAL LINK
+      ================================= */
+      return (
+        <li>
+          <a
+            href={item.link || '#'}
+            class:list={[
+              currentPath === item.link && 'active'
+            ]}
+          >
+            {item.label}
           </a>
+        </li>
+      );
 
-          <a href="/enrichment/">
-            <span>Enrichment</span>
-            <small>Turn records into intelligence</small>
-          </a>
-
-        </div>
-      </div>
-
-    </li>
-
-
-    <!-- Process -->
-    <li>
-      <a href="/process/">
-        Process
-      </a>
-    </li>
-
-
-    <!-- Use Cases -->
-    <li>
-      <a href="/use-cases/">
-        Use Cases
-      </a>
-    </li>
-
-
-    <!-- Company -->
-    <li class="nav-item">
-
-      <button
-        type="button"
-        class="nav-trigger"
-        aria-haspopup="true"
-      >
-        Company
-      </button>
-
-      <div class="nav-menu nav-menu--right">
-        <div class="nav-menu-inner">
-
-          <a href="/about/">
-            <span>About</span>
-            <small>Who we are</small>
-          </a>
-
-          <a href="/contact/">
-            <span>Contact</span>
-            <small>Talk to a specialist</small>
-          </a>
-
-          <a href="/case-studies/">
-            <span>Case Studies</span>
-            <small>Results in the field</small>
-          </a>
-
-          <a href="/blog/">
-            <span>Blogs</span>
-            <small>Guides &amp; insights</small>
-          </a>
-
-          <a href="/whitepapers/">
-            <span>White Papers</span>
-            <small>In-depth playbooks</small>
-          </a>
-
-          <a href="/faq/">
-            <span>FAQ</span>
-            <small>Common questions</small>
-          </a>
-
-        </div>
-      </div>
-
-    </li>
+    })}
 
   </ul>
 

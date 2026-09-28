@@ -24,6 +24,13 @@ export const pageType = defineType({
       validation: (Rule) => Rule.required(),
     }),
 
+    // SEO
+    defineField({
+      name: 'seo',
+      title: 'SEO',
+      type: 'seo',
+    }),
+
     defineField({
       name: 'sections',
       title: 'Page Sections',
@@ -77,11 +84,21 @@ export const pageType = defineType({
         {
           type: 'caseStudies',
         },
-        {type: 'richText'},
-        {type: 'customHtml'},
-        {type: 'faqSection'},
-        {type: 'useCases'},
-        {type: 'contactBooking'},
+        {
+          type: 'richText',
+        },
+        {
+          type: 'customHtml',
+        },
+        {
+          type: 'faqSection',
+        },
+        {
+          type: 'useCases',
+        },
+        {
+          type: 'contactBooking',
+        },
       ],
     }),
   ],

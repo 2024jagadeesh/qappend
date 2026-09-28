@@ -1,80 +1,91 @@
-/* =========================
-   CASE STUDIES
-========================= */
+/* =========================================
+   CASE STUDIES / IMPACT
+========================================= */
 
 .cases {
-  padding: 100px var(--pad-x);
+  width: 100%;
+  padding: 88px 6vw;
   background: rgb(21, 74, 41);
   color: var(--paper);
 }
 
 .cases-hd {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
-  align-items: end;
-  margin-bottom: 56px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+
+.cases-hd > div {
+  flex: 1;
 }
 
 .cases-hd .tag {
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 }
 
 .cases-hd .h2 {
   margin: 0;
-}
-
-.cases-hd .lede {
-  margin: 0;
-  max-width: 560px;
-  color: rgba(251, 248, 240, 0.72);
+  color: var(--paper);
 }
 
 .cases-hd .h2 em {
-  color: var(--gold);
+  font-family: var(--f-serif);
   font-style: italic;
+  font-weight: 400;
 }
 
-/* =========================
+.cases-hd .lede {
+  max-width: 520px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* =========================================
    CASE STUDY GRID
-========================= */
+========================================= */
 
 .cs-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1px;
-  background: rgba(251, 248, 240, 0.18);
-  border: 1px solid rgba(251, 248, 240, 0.18);
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   margin-bottom: 48px;
 }
 
 .cs {
-  min-height: 300px;
-  padding: 42px 36px;
-  background: rgb(21, 74, 41);
+  min-height: 260px;
+  padding: 32px;
+  background: rgb(0, 8, 3);
   display: flex;
   flex-direction: column;
 }
 
 .cs-stat {
-  font-size: clamp(48px, 5vw, 72px);
+  font-family: var(--f-display);
+  font-size: clamp(52px, 6vw, 82px);
   line-height: 0.95;
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  color: var(--paper);
-  margin-bottom: 28px;
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  color: #d4a82c;
+  margin-bottom: 26px;
 }
 
 .cs-stat em {
-  color: var(--gold);
-  font-style: normal;
+  font-family: var(--f-serif);
   font-size: 0.55em;
-  margin-left: 3px;
+  font-style: italic;
+  font-weight: 400;
+  color: #d4a82c;
+  margin-left: 4px;
 }
 
 .cs h4 {
-  margin: 0 0 14px;
-  font-size: 20px;
+  margin: 0 0 10px;
+  font-family: var(--f-display);
+  font-size: 17px;
   line-height: 1.25;
   font-weight: 600;
   color: var(--paper);
@@ -82,33 +93,47 @@
 
 .cs p {
   margin: 0;
-  color: rgba(251, 248, 240, 0.68);
-  font-size: 15px;
+  max-width: 360px;
+  font-family: var(--f-body);
+  font-size: 14px;
   line-height: 1.7;
-  max-width: 420px;
+  color: rgba(255, 255, 255, 0.68);
 }
 
-/* =========================
+
+/* =========================================
    BUTTON
-========================= */
+========================================= */
 
 .cases > div:last-child {
   text-align: center;
 }
 
-/* =========================
-   MOBILE
-========================= */
+.cases .btn-hot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* =========================================
+   TABLET
+========================================= */
 
 @media (max-width: 900px) {
+
   .cases {
-    padding: 80px var(--pad-x);
+    padding: 72px 5vw;
   }
 
   .cases-hd {
-    grid-template-columns: 1fr;
-    gap: 24px;
-    margin-bottom: 40px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .cases-hd .lede {
+    max-width: 680px;
   }
 
   .cs-grid {
@@ -117,24 +142,43 @@
 
   .cs {
     min-height: auto;
-    padding: 36px 28px;
+    padding: 30px;
   }
 }
 
-@media (max-width: 600px) {
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 560px) {
+
   .cases {
-    padding: 64px 20px;
+    padding: 60px 20px;
+  }
+
+  .cases-hd {
+    margin-bottom: 32px;
+  }
+
+  .cs-grid {
+    margin-bottom: 36px;
+  }
+
+  .cs {
+    padding: 26px 22px;
   }
 
   .cs-stat {
-    font-size: 52px;
+    font-size: 58px;
+    margin-bottom: 22px;
   }
 
   .cs h4 {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .cs p {
-    font-size: 14px;
+    font-size: 13px;
   }
 }

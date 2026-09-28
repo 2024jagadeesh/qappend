@@ -42,6 +42,7 @@ import {richTextType} from './shared/richText'
 import {customHtmlType} from './shared/customHtml'
 import {faqType} from './shared/faq'
 import {contactBookingType} from './shared/contactBooking'
+import { seoType } from './shared/seo'
 
 export const schemaTypes = [
   siteSettingsType,
@@ -80,4 +81,5 @@ export const schemaTypes = [
   customHtmlType,
   faqType,
   contactBookingType,
+  seoType,
 ]

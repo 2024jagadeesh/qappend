@@ -1,10 +1,41 @@
 export const SITE_SETTINGS_QUERY = `
   *[_type == "siteSettings"][0]{
-    siteName,
-    "logoUrl": logo.asset->url,
-    headerCtaText,
-    headerCtaLink
-  }
+  siteName,
+  logo,
+  headerCtaText,
+  headerCtaLink,
+  navigation[]{
+    label,
+    link,
+    type,
+    dropdownStyle,
+    items[]{
+      label,
+      description,
+      link
+    }
+  },
+  footer{
+      description,
+
+      columns[]{
+        title,
+
+        links[]{
+          label,
+          link
+        }
+      },
+
+      legalLinks[]{
+        label,
+        link
+      },
+
+      copyright,
+      bottomText
+    }
+}
 `;
 
 export const PAGE_QUERY = `
@@ -15,6 +46,13 @@ export const PAGE_QUERY = `
     _id,
     title,
     slug,
+    seo{
+  metaTitle,
+  metaDescription,
+  canonicalUrl,
+  noIndex,
+  "ogImage": ogImage.asset->url
+},
 
     sections[]{
       _type,

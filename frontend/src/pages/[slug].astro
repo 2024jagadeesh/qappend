@@ -29,6 +29,15 @@ if (!page) {
 }
 ---
 
-<MainLayout title={page.title}>
+<MainLayout
+  title={page?.seo?.metaTitle ?? page?.title ?? 'QuickAppend'}
+  description={
+    page?.seo?.metaDescription ??
+    'Data appending and enrichment for B2B revenue teams.'
+  }
+  canonical={page?.seo?.canonicalUrl}
+  ogImage={page?.seo?.ogImage}
+  noIndex={page?.seo?.noIndex ?? false}
+>
   <PageRenderer sections={page.sections} />
 </MainLayout>
