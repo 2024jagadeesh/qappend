@@ -2,20 +2,6 @@
 import Layout from '../../layouts/MainLayout.astro';
 import { sanityClient } from '../../lib/sanity';
 
-export async function getStaticPaths() {
-  const studies = await sanityClient.fetch(`
-    *[_type == "caseStudy"]{
-      "slug": slug.current
-    }
-  `);
-
-  return studies.map((study) => ({
-    params: {
-      slug: study.slug,
-    },
-  }));
-}
-
 const { slug } = Astro.params;
 
 const caseStudy = await sanityClient.fetch(

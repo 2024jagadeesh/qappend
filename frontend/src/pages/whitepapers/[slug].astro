@@ -2,21 +2,6 @@
 import Layout from '../../layouts/MainLayout.astro';
 import { sanityClient } from '../../lib/sanity';
 
-export async function getStaticPaths() {
-  const whitepapers = await sanityClient.fetch(`
-    *[_type == "whitepaper" && defined(slug.current)] {
-      "slug": slug.current
-    }
-  `);
-
-  return whitepapers.map((whitepaper: any) => ({
-    params: {
-      slug: whitepaper.slug,
-    },
-  }));
-}
-
-
 /* =========================================================
    CURRENT WHITE PAPER
    ========================================================= */
