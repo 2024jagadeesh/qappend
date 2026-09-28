@@ -10,6 +10,7 @@ export default defineConfig({
 
   adapter: node({
     mode: "standalone",
+    host: true,
   }),
 
   integrations: [react()],
