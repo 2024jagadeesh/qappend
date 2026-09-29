@@ -357,6 +357,7 @@ section {
    ========================================================= */
 
 @media (max-width: 1100px) {
+
   .nav {
     padding-left: 5vw;
     padding-right: 5vw;
@@ -370,37 +371,596 @@ section {
   .nav-trigger {
     font-size: 17px;
   }
+
 }
 
-@media (max-width: 700px) {
+
+/* =========================================================
+   MOBILE NAVIGATION
+   ========================================================= */
+
+.nav-toggle {
+  display: none;
+
+  width: 42px;
+  height: 42px;
+
+  padding: 0;
+
+  border: 1px solid var(--line);
+  border-radius: 50%;
+
+  background: var(--paper);
+
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  gap: 5px;
+
+  cursor: pointer;
+
+  flex-shrink: 0;
+}
+
+
+/* Hamburger lines */
+
+.nav-toggle span {
+  display: block;
+
+  width: 18px;
+  height: 2px;
+
+  background: var(--ink);
+
+  border-radius: 2px;
+
+  transition:
+    transform 0.25s ease,
+    opacity 0.2s ease;
+}
+
+
+/* =========================================================
+   HAMBURGER → X
+   ========================================================= */
+
+.nav.menu-open .nav-toggle span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.nav.menu-open .nav-toggle span:nth-child(2) {
+  opacity: 0;
+}
+
+.nav.menu-open .nav-toggle span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 980px) {
+
+  /* -----------------------------------------
+     NAV BAR
+  ----------------------------------------- */
+
   .nav {
-    padding: 14px 5vw;
+    position: relative;
+
+    padding-left: 5vw;
+    padding-right: 5vw;
   }
 
-  /* Original QuickAppend behavior:
-     desktop navigation disappears on mobile */
+
+  /* -----------------------------------------
+     HAMBURGER
+  ----------------------------------------- */
+
+  .nav-toggle {
+    display: flex;
+  }
+
+
+  /* -----------------------------------------
+     MOBILE NAVIGATION PANEL
+  ----------------------------------------- */
 
   .nav-links {
     display: none;
+
+    position: absolute;
+
+    top: calc(100% + 10px);
+    left: 0;
+    right: 0;
+
+    z-index: 1000;
+
+    width: 100%;
+
+    margin: 0;
+
+    padding: 14px;
+
+    list-style: none;
+
+    flex-direction: column;
+
+    gap: 2px;
+
+    align-items: stretch;
+
+    background: var(--paper);
+
+    border: 1px solid var(--line);
+
+    border-radius: 20px;
+
+    box-shadow:
+      0 20px 50px rgba(0, 0, 0, 0.12);
+
+    box-sizing: border-box;
   }
+
+
+  /* Open mobile menu */
+
+  .nav.menu-open .nav-links {
+    display: flex;
+  }
+
+
+  /* -----------------------------------------
+     ALL TOP-LEVEL ITEMS
+  ----------------------------------------- */
+
+  .nav-links > li {
+    width: 100%;
+
+    margin: 0;
+
+    padding: 0;
+  }
+
+
+  /* -----------------------------------------
+     NORMAL LINKS
+  ----------------------------------------- */
+
+  .nav-links > li > a {
+    display: flex;
+
+    width: 100%;
+
+    min-height: 48px;
+
+    padding: 13px 12px;
+
+    align-items: center;
+
+    box-sizing: border-box;
+
+    border-radius: 8px;
+
+    color: var(--ink);
+
+    font-size: 18px;
+
+    text-decoration: none;
+  }
+
+  .nav-links > li > a:hover {
+    background: var(--bone);
+  }
+
+
+  /* -----------------------------------------
+     DROPDOWN ITEM
+
+     IMPORTANT:
+     Desktop .nav-item is flex-row.
+     Mobile must become column.
+  ----------------------------------------- */
+
+  .nav-item {
+    position: relative;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: stretch;
+
+    width: 100%;
+
+    margin: 0;
+    padding: 0;
+  }
+
+
+  /* -----------------------------------------
+     DROPDOWN TRIGGER
+  ----------------------------------------- */
+
+  .nav-trigger {
+    display: flex;
+
+    width: 100%;
+
+    min-height: 48px;
+
+    margin: 0;
+
+    padding: 13px 12px;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    box-sizing: border-box;
+
+    border: 0;
+
+    background: transparent;
+
+    color: var(--ink);
+
+    font-family: inherit;
+
+    font-size: 18px;
+
+    font-weight: 500;
+
+    line-height: 1.3;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    border-radius: 8px;
+  }
+
+  .nav-trigger:hover {
+    background: var(--bone);
+  }
+
+
+  /* -----------------------------------------
+     EXISTING DROPDOWN ARROW
+  ----------------------------------------- */
+
+  .nav-trigger::after {
+    flex-shrink: 0;
+
+    width: 5px;
+    height: 5px;
+
+    margin-left: 12px;
+
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+
+    transform:
+      translateY(-2px)
+      rotate(45deg);
+
+    opacity: 0.55;
+
+    transition:
+      transform 0.18s ease,
+      opacity 0.18s ease;
+  }
+
+
+  /* Arrow when dropdown is open */
+
+  .nav-item.dropdown-open .nav-trigger::after {
+    transform:
+      translateY(2px)
+      rotate(225deg);
+
+    opacity: 0.8;
+  }
+
+
+  /* -----------------------------------------
+     DROPDOWN MENU
+  ----------------------------------------- */
+
+  .nav-menu {
+    position: static !important;
+
+    display: none;
+
+    width: 100%;
+
+    height: auto;
+
+    min-height: 0;
+    max-height: none;
+
+    margin: 0;
+    padding: 0 0 6px;
+
+    box-sizing: border-box;
+
+    background: transparent;
+
+    border: 0;
+
+    box-shadow: none;
+
+    opacity: 1;
+    visibility: visible;
+
+    transform: none;
+
+    transition: none;
+
+    overflow: visible;
+  }
+
+
+  /* Open dropdown */
+
+  .nav-item.dropdown-open .nav-menu {
+    display: block;
+  }
+
+
+  /* -----------------------------------------
+     DROPDOWN INNER
+  ----------------------------------------- */
+
+  .nav-menu-inner {
+    display: flex;
+
+    flex-direction: column;
+
+    width: 100%;
+
+    height: auto;
+
+    min-height: 0;
+
+    margin: 0;
+
+    padding: 2px 0 4px 24px;
+
+    gap: 2px;
+
+    box-sizing: border-box;
+
+    background: transparent;
+
+    border: 0;
+
+    border-radius: 0;
+
+    box-shadow: none;
+  }
+
+
+  /* -----------------------------------------
+     DROPDOWN LINKS
+  ----------------------------------------- */
+
+  .nav-menu-inner a {
+    display: flex;
+
+    flex-direction: column;
+
+    width: 100%;
+
+    height: auto;
+
+    min-height: 40px;
+
+    margin: 0;
+
+    padding: 9px 12px;
+
+    box-sizing: border-box;
+
+    justify-content: center;
+
+    border-radius: 7px;
+
+    font-size: 14px;
+
+    line-height: 1.35;
+  }
+
+  .nav-menu-inner a:hover {
+    background: var(--bone);
+  }
+
+
+  /* Description */
+
+  .nav-menu-inner a small {
+    display: block;
+
+    margin-top: 3px;
+
+    font-size: 10px;
+
+    line-height: 1.4;
+  }
+
+
+  /* -----------------------------------------
+     CTA
+  ----------------------------------------- */
 
   .nav-cta {
-    padding: 8px 14px;
-
-    font-size: 12px;
+    display: none;
   }
 
-  .logo {
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  .nav {
+    padding: 14px 18px;
+  }
+
+  .nav-toggle {
+    width: 40px;
+    height: 40px;
+  }
+
+  .nav-links {
+    top: calc(100% + 8px);
+
+    left: 0;
+    right: 0;
+
+    width: 100%;
+
+    padding: 12px;
+
+    border-radius: 18px;
+  }
+
+  .nav-links > li > a,
+  .nav-trigger {
+    min-height: 46px;
+
+    padding: 12px 10px;
+
     font-size: 17px;
   }
 
-  .logo-mark {
-    width: 21px;
-    height: 21px;
+  .nav-menu-inner {
+    padding-left: 20px;
   }
 
-  .logo img {
-    height: 28px;
-    max-width: 150px;
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+  .nav {
+    padding-left: 14px;
+    padding-right: 14px;
   }
+
+  .nav-links {
+    padding: 10px;
+  }
+
+  .nav-links > li > a,
+  .nav-trigger {
+    font-size: 16px;
+  }
+
+}
+
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+  .nav {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .nav-toggle {
+    width: 40px;
+    height: 40px;
+  }
+
+  .nav-links {
+    top: calc(100% + 8px);
+
+    padding: 14px;
+  }
+
+}
+
+
+@media (max-width: 980px) {
+
+  /* Mobile dropdown container */
+  .nav-item .nav-menu {
+    position: static !important;
+
+    display: none;
+
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    transform: none !important;
+
+    opacity: 1 !important;
+    visibility: visible !important;
+
+    overflow: visible !important;
+
+    box-shadow: none !important;
+    border: 0 !important;
+  }
+
+  /* Open dropdown */
+  .nav-item.dropdown-open .nav-menu {
+    display: block !important;
+
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+
+  /* Submenu wrapper */
+  .nav-menu-inner {
+    display: flex !important;
+    flex-direction: column !important;
+
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+    padding: 4px 0 8px 18px !important;
+
+    gap: 2px !important;
+
+    transform: none !important;
+  }
+
+  /* Submenu links */
+  .nav-menu-inner > a {
+    display: block !important;
+
+    width: 100% !important;
+
+    height: auto !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+    padding: 9px 12px !important;
+  }
+
 }

@@ -27,8 +27,22 @@ const currentPath = Astro.url.pathname;
   </a>
 
 
+  <!-- Mobile Menu Button -->
+  <button
+    class="nav-toggle"
+    type="button"
+    aria-label="Open navigation"
+    aria-expanded="false"
+    aria-controls="mobile-navigation"
+  >
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+
   <!-- Navigation -->
-  <ul class="nav-links">
+  <ul class="nav-links" id="mobile-navigation">
 
     {navigation.map((item: any) => {
 
@@ -43,8 +57,9 @@ const currentPath = Astro.url.pathname;
               type="button"
               class="nav-trigger"
               aria-haspopup="true"
+              aria-expanded="false"
             >
-              {item.label}
+              <span>{item.label}</span>
             </button>
 
             <div
@@ -111,3 +126,140 @@ const currentPath = Astro.url.pathname;
   </button>
 
 </nav>
+
+
+<script>
+  const nav = document.querySelector('.nav');
+  const toggle = document.querySelector('.nav-toggle');
+
+  if (nav && toggle) {
+
+    toggle.addEventListener('click', () => {
+      const isOpen = nav.classList.toggle('menu-open');
+
+      toggle.setAttribute(
+        'aria-expanded',
+        String(isOpen)
+      );
+
+      toggle.setAttribute(
+        'aria-label',
+        isOpen ? 'Close navigation' : 'Open navigation'
+      );
+    });
+
+
+    /*
+     * Mobile dropdowns
+     */
+    const dropdownTriggers =
+      document.querySelectorAll('.nav-trigger');
+
+    dropdownTriggers.forEach((trigger) => {
+
+      trigger.addEventListener('click', () => {
+
+        if (window.innerWidth <= 980) {
+
+          const parent = trigger.closest('.nav-item');
+
+          if (!parent) return;
+
+          const isOpen =
+            parent.classList.toggle('dropdown-open');
+
+          trigger.setAttribute(
+            'aria-expanded',
+            String(isOpen)
+          );
+        }
+
+      });
+
+    });
+
+
+    /*
+     * Close mobile menu when normal link is clicked
+     */
+    const normalLinks =
+      document.querySelectorAll(
+        '.nav-links > li > a'
+      );
+
+    normalLinks.forEach((link) => {
+
+      link.addEventListener('click', () => {
+
+        if (window.innerWidth <= 980) {
+          nav.classList.remove('menu-open');
+
+          toggle.setAttribute(
+            'aria-expanded',
+            'false'
+          );
+
+          toggle.setAttribute(
+            'aria-label',
+            'Open navigation'
+          );
+        }
+
+      });
+
+    });
+
+
+    /*
+     * Close menu when clicking outside
+     */
+    document.addEventListener('click', (event) => {
+
+      const target = event.target as Node;
+
+      if (
+        window.innerWidth <= 980 &&
+        !nav.contains(target)
+      ) {
+        nav.classList.remove('menu-open');
+
+        toggle.setAttribute(
+          'aria-expanded',
+          'false'
+        );
+
+        toggle.setAttribute(
+          'aria-label',
+          'Open navigation'
+        );
+      }
+
+    });
+
+
+    /*
+     * Reset mobile state when returning to desktop
+     */
+    window.addEventListener('resize', () => {
+
+      if (window.innerWidth > 980) {
+
+        nav.classList.remove('menu-open');
+
+        toggle.setAttribute(
+          'aria-expanded',
+          'false'
+        );
+
+        document
+          .querySelectorAll('.dropdown-open')
+          .forEach((item) => {
+            item.classList.remove('dropdown-open');
+          });
+
+      }
+
+    });
+
+  }
+</script>
