@@ -1,248 +1,439 @@
 /* =========================================================
-   APPENDING + ENRICHMENT SPLIT
+   APPENDING + ENRICHMENT
    ========================================================= */
 
 .ae-split {
   width: 100%;
   max-width: 100%;
+
   display: flex;
-  align-items: stretch;
+  flex-direction: row;
+
+  margin: 0;
+  padding: 0;
+
   gap: 0;
+
+  box-sizing: border-box;
+
   overflow: hidden;
+
   border-radius: 36px;
 }
 
-/* Both panels */
-.ae-split > section {
-  flex: 1 1 50%;
+
+/* =========================================================
+   PANELS
+   ========================================================= */
+
+.ae-split .ae-panel {
+  position: relative;
+
+  width: 50%;
   min-width: 0;
+
+  flex: 1 1 0;
 
   margin: 0 !important;
 
-  padding: clamp(58px, 5vw, 78px) clamp(40px, 5vw, 72px);
+  padding: 64px 56px;
 
-  position: relative;
+  box-sizing: border-box;
 
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
 
-  border: 0 !important;
-
-  transition:
-    transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
-    box-shadow 0.3s ease;
-
-  /* Override global section styles */
-  box-sizing: border-box;
+  overflow: hidden;
 }
 
-/* LEFT — DATA APPENDING */
-.ae-split > .appending {
+
+/* =========================================================
+   APPENDING
+   ========================================================= */
+
+.ae-split .appending {
   background: #14532d;
   color: #fbf8f0;
 
-  border-radius: 36px 0 0 36px !important;
-
-  transform-origin: left center;
+  border-radius: 36px 0 0 36px;
 }
 
-/* RIGHT — DATA ENRICHMENT */
-.ae-split > .enrich {
+
+/* =========================================================
+   ENRICHMENT
+   ========================================================= */
+
+.ae-split .enrich {
   background: #1d2421;
   color: #fbf8f0;
 
-  border-radius: 0 36px 36px 0 !important;
-
-  transform-origin: right center;
+  border-radius: 0 36px 36px 0;
 }
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.ae-split .ae-content {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+}
+
 
 /* =========================================================
    HEADER
    ========================================================= */
 
-.ae-split .enrich-hd {
-  display: block;
-  margin: 0 0 30px;
+.ae-split .ae-header {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+
+  margin: 0;
 }
 
-.ae-split .tag {
-  margin-bottom: 28px;
+
+/* =========================================================
+   TAG
+   ========================================================= */
+
+.ae-split .ae-tag {
+  display: block;
+
+  margin: 0 0 24px;
 
   font-family: var(--f-mono);
+
   font-size: 12px;
   font-weight: 600;
 
-  line-height: 1;
+  line-height: 1.3;
+
   letter-spacing: 0.14em;
+
   text-transform: uppercase;
 
   color: var(--cobalt);
+
+  overflow-wrap: anywhere;
 }
 
-/* Right tag should be light */
-.ae-split .enrich .tag {
+
+/* RIGHT TAG */
+
+.ae-split .enrich .ae-tag {
   color: rgba(251, 248, 240, 0.9);
 }
 
+
 /* =========================================================
-   HEADINGS
+   TITLE
    ========================================================= */
 
-.ae-split .h2 {
-  margin: 0;
+.ae-split .ae-title {
+  display: block;
 
-  max-width: 760px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+
+  margin: 0;
+  padding: 0;
 
   font-family: var(--f-display);
+
   font-size: clamp(34px, 3.1vw, 48px);
+
   font-weight: 600;
 
-  line-height: 1.02;
-  letter-spacing: -0.045em;
+  line-height: 1.05;
+
+  letter-spacing: -0.04em;
 
   color: #fbf8f0;
+
+  overflow-wrap: break-word;
+
+  word-break: normal;
 }
 
-/* Italic highlighted text */
-.ae-split .h2 em {
+
+/* HIGHLIGHT */
+
+.ae-split .ae-title em {
   font-family: var(--f-serif);
+
   font-style: italic;
+
   font-weight: 400;
 
   color: var(--cobalt);
 }
 
+
+/* =========================================================
+   BUTTON AREA
+   ========================================================= */
+
+.ae-split .ae-button-wrap {
+  width: 100%;
+  max-width: 100%;
+
+  margin-top: 40px;
+
+  box-sizing: border-box;
+}
+
+
 /* =========================================================
    BUTTON
    ========================================================= */
 
-.ae-split > section > div:last-child {
-  margin-top: auto !important;
-  padding-top: 32px;
-}
-
-.ae-split .btn {
+.ae-split .ae-btn {
   display: inline-flex;
+
   align-items: center;
   justify-content: center;
 
-  min-height: 62px;
-  padding: 16px 28px;
+  max-width: 100%;
+
+  min-height: 60px;
+
+  padding: 15px 26px;
+
+  box-sizing: border-box;
 
   border-radius: 999px;
 
   font-family: var(--f-body);
+
   font-size: 16px;
   font-weight: 600;
 
-  line-height: 1;
+  line-height: 1.2;
 
-  white-space: nowrap;
+  text-decoration: none;
+
+  white-space: normal;
+
+  text-align: center;
 
   background: #d4a82c;
+
   color: #17221c;
 
   border: 1px solid #d4a82c;
 
+  overflow-wrap: break-word;
+
   transition:
     background 0.2s ease,
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+    border-color 0.2s ease,
+    transform 0.2s ease;
 }
 
-.ae-split .btn::after {
+
+/* BUTTON ARROW */
+
+.ae-split .ae-btn::after {
   content: "→";
+
   margin-left: 10px;
-  font-size: 18px;
+
+  flex-shrink: 0;
 }
 
-.ae-split .btn:hover {
+
+/* BUTTON HOVER */
+
+.ae-split .ae-btn:hover {
   background: #e1b83c;
+
   border-color: #e1b83c;
 
   transform: translateY(-2px);
-
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
 }
+
 
 /* =========================================================
-   PANEL HOVER
-   ========================================================= */
-
-.ae-split > .appending:hover {
-  transform: translateY(-6px) scale(1.015);
-  z-index: 5;
-
-  box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.55);
-}
-
-.ae-split > .enrich:hover {
-  transform: translateY(-6px) scale(1.015);
-  z-index: 5;
-
-  box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.55);
-}
-
-/* =========================================================
-   RESPONSIVE
+   TABLET
    ========================================================= */
 
 @media (max-width: 980px) {
+
   .ae-split {
     flex-direction: column;
+
+    width: 100%;
+    max-width: 100%;
+
     border-radius: 28px;
   }
 
-  .ae-split > section {
-    flex: 1 1 auto;
 
-    padding: 52px clamp(28px, 6vw, 56px);
+  .ae-split .ae-panel {
+    width: 100%;
+    min-width: 0;
+
+    flex: none;
+
+    padding: 52px 40px;
   }
 
-  .ae-split > .appending {
-    border-radius: 28px 28px 0 0 !important;
+
+  .ae-split .appending {
+    border-radius: 28px 28px 0 0;
   }
 
-  .ae-split > .enrich {
-    border-radius: 0 0 28px 28px !important;
+
+  .ae-split .enrich {
+    border-radius: 0 0 28px 28px;
   }
 
-  .ae-split .h2 {
+
+  .ae-split .ae-title {
     font-size: clamp(34px, 6vw, 46px);
   }
+
 }
 
-@media (max-width: 600px) {
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 767px) {
+
   .ae-split {
     border-radius: 22px;
   }
 
-  .ae-split > section {
-    padding: 42px 26px;
-  }
 
-  .ae-split > .appending {
-    border-radius: 22px 22px 0 0 !important;
-  }
-
-  .ae-split > .enrich {
-    border-radius: 0 0 22px 22px !important;
-  }
-
-  .ae-split .tag {
-    margin-bottom: 20px;
-    font-size: 10px;
-  }
-
-  .ae-split .h2 {
-    font-size: 34px;
-    line-height: 1.05;
-  }
-
-  .ae-split .btn {
+  .ae-split .ae-panel {
     width: 100%;
-    min-height: 56px;
+
+    padding: 42px 24px;
+  }
+
+
+  .ae-split .appending {
+    border-radius: 22px 22px 0 0;
+  }
+
+
+  .ae-split .enrich {
+    border-radius: 0 0 22px 22px;
+  }
+
+
+  .ae-split .ae-tag {
+    margin-bottom: 18px;
+
+    font-size: 10px;
+
+    letter-spacing: 0.11em;
+  }
+
+
+  .ae-split .ae-title {
+    width: 100%;
+    max-width: 100%;
+
+    font-size: clamp(30px, 8vw, 38px);
+
+    line-height: 1.07;
+  }
+
+
+  .ae-split .ae-button-wrap {
+    margin-top: 30px;
+  }
+
+
+  .ae-split .ae-btn {
+    min-height: 54px;
+
+    padding: 14px 20px;
+
     font-size: 14px;
   }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+  .ae-split {
+    border-radius: 18px;
+  }
+
+
+  .ae-split .ae-panel {
+    padding: 36px 20px;
+  }
+
+
+  .ae-split .appending {
+    border-radius: 18px 18px 0 0;
+  }
+
+
+  .ae-split .enrich {
+    border-radius: 0 0 18px 18px;
+  }
+
+
+  .ae-split .ae-tag {
+    font-size: 9px;
+
+    letter-spacing: 0.09em;
+  }
+
+
+  .ae-split .ae-title {
+    font-size: 29px;
+
+    line-height: 1.08;
+  }
+
+
+  .ae-split .ae-button-wrap {
+    margin-top: 26px;
+  }
+
+
+  .ae-split .ae-btn {
+    width: 100%;
+
+    min-height: 52px;
+
+    padding: 13px 18px;
+
+    font-size: 14px;
+  }
+
+}
+
+
+/* =========================================================
+   TOUCH
+   ========================================================= */
+
+@media (hover: none) {
+
+  .ae-split .ae-btn:hover {
+    transform: none;
+  }
+
 }

@@ -45,3 +45,167 @@
   font-family: var(--f-mono);
   text-transform: uppercase;
 }
+
+/* ============ STAT BAND ============ */
+
+.statband {
+  background: #101a33;
+
+  background-image: radial-gradient(
+    120% 140% at 100% 0%,
+    color-mix(in srgb, var(--hot) 45%, transparent) 0%,
+    transparent 55%
+  );
+
+  padding: 88px 5vw;
+}
+
+.statband-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 48px;
+}
+
+.statband-item {
+  text-align: center;
+  padding: 0 20px;
+
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.statband-item:last-child {
+  border-right: none;
+}
+
+.statband-num {
+  font-family: var(--f-display);
+  font-size: 84px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  color: var(--paper);
+}
+
+.statband-num em {
+  font-family: var(--f-serif);
+  font-style: italic;
+  color: var(--hot);
+  font-weight: 400;
+}
+
+.statband-label {
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 16px;
+
+  font-family: var(--f-mono);
+  text-transform: uppercase;
+}
+
+
+/* ========================================
+   TABLET
+   1024px and below
+======================================== */
+
+@media (max-width: 1024px) {
+
+  .statband {
+    padding: 72px 5vw;
+  }
+
+  .statband-inner {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 48px 20px;
+  }
+
+  .statband-item {
+    padding: 0 15px;
+  }
+
+  .statband-item:nth-child(2) {
+    border-right: none;
+  }
+
+  .statband-num {
+    font-size: 68px;
+  }
+
+  .statband-label {
+    font-size: 14px;
+    margin-top: 14px;
+  }
+}
+
+
+/* ========================================
+   MOBILE
+   767px and below
+======================================== */
+
+@media (max-width: 767px) {
+
+  .statband {
+    padding: 60px 24px;
+  }
+
+  .statband-inner {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .statband-item {
+    padding: 28px 10px;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .statband-item:first-child {
+    padding-top: 0;
+  }
+
+  .statband-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .statband-num {
+    font-size: 58px;
+  }
+
+  .statband-label {
+    font-size: 13px;
+    margin-top: 12px;
+    line-height: 1.4;
+  }
+}
+
+
+/* ========================================
+   SMALL MOBILE
+   480px and below
+======================================== */
+
+@media (max-width: 480px) {
+
+  .statband {
+    padding: 50px 20px;
+  }
+
+  .statband-item {
+    padding: 24px 5px;
+  }
+
+  .statband-num {
+    font-size: 50px;
+  }
+
+  .statband-label {
+    font-size: 12px;
+    letter-spacing: 0.04em;
+  }
+}
