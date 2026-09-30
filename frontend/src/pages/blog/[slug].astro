@@ -73,6 +73,66 @@ if (!post) {
   return Astro.redirect('/404');
 }
 
+/* =========================================================
+   TABLE OF CONTENTS
+   ========================================================= */
+
+const slugify = (text: string) =>
+  text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
+
+const headingIds = new Map<string, string>();
+const usedHeadingIds = new Set<string>();
+
+const headings: {
+  id: string;
+  text: string;
+  level: 2 | 3;
+}[] = [];
+
+post.content?.forEach((block: any, index: number) => {
+  if (
+    block._type !== 'block' ||
+    (block.style !== 'h2' && block.style !== 'h3')
+  ) {
+    return;
+  }
+
+  const text = block.children
+    ?.map((child: any) => child.text || '')
+    .join('')
+    .trim();
+
+  if (!text) return;
+
+  const baseId = slugify(text) || `section-${index}`;
+  let id = baseId;
+  let count = 2;
+
+  while (usedHeadingIds.has(id)) {
+    id = `${baseId}-${count}`;
+    count++;
+  }
+
+  usedHeadingIds.add(id);
+
+  // Use Sanity's _key where available so the same ID is used during render.
+  headingIds.set(block._key || `index-${index}`, id);
+
+  headings.push({
+    id,
+    text,
+    level: block.style === 'h2' ? 2 : 3,
+  });
+});
+
+const getHeadingId = (block: any, index: number) =>
+  headingIds.get(block._key || `index-${index}`) || `section-${index}`;
+
 const formatDate = (date: string | null) => {
   if (!date) return '';
 
@@ -165,14 +225,16 @@ const formatDate = (date: string | null) => {
 
 
     <!-- ===================================================
-         CONTENT
+         CONTENT + TABLE OF CONTENTS
          =================================================== -->
 
-    {post.content?.length > 0 && (
+    <div class="post-layout">
 
       <div class="post-body">
 
-        {post.content.map((block: any, index: number) => {
+        {post.content?.length > 0 && (
+          <>
+            {post.content.map((block: any, index: number) => {
 
 
           /* =================================================
@@ -194,7 +256,7 @@ const formatDate = (date: string | null) => {
 
             if (block.style === 'h2') {
               return (
-                <h2>
+                <h2 id={getHeadingId(block, index)}>
                   {text}
                 </h2>
               );
@@ -205,7 +267,7 @@ const formatDate = (date: string | null) => {
 
             if (block.style === 'h3') {
               return (
-                <h3>
+                <h3 id={getHeadingId(block, index)}>
                   {text}
                 </h3>
               );
@@ -455,13 +517,41 @@ const formatDate = (date: string | null) => {
           }
 
 
-          return null;
+              return null;
 
-        })}
+            })}
+          </>
+        )}
 
       </div>
 
-    )}
+      <!-- =================================================
+           TABLE OF CONTENTS
+           ================================================= -->
+
+      {headings.length > 0 && (
+        <aside class="post-toc">
+          <div class="toc-inner">
+            <div class="toc-label">On this page</div>
+
+            <nav aria-label="Table of contents">
+              {headings.map((heading) => (
+                <a
+                  href={`#${heading.id}`}
+                  class:list={{
+                    'toc-link': true,
+                    'toc-h3': heading.level === 3,
+                  }}
+                >
+                  {heading.text}
+                </a>
+              ))}
+            </nav>
+          </div>
+        </aside>
+      )}
+
+    </div>
 
 
     <!-- ===================================================
@@ -763,8 +853,7 @@ const formatDate = (date: string | null) => {
 
 .post-lead img {
   width: 100%;
-  aspect-ratio: 4 / 3;
-  height: auto;
+  height: 360px;
   display: block;
   object-fit: cover;
   border-radius: 16px;
@@ -784,9 +873,19 @@ const formatDate = (date: string | null) => {
    ARTICLE BODY
    ========================================================= */
 
-.post-body {
-  max-width: 680px;
+.post-layout {
+  max-width: 1040px;
   margin: 56px auto 0;
+  display: grid;
+  grid-template-columns: minmax(0, 680px) 240px;
+  gap: 70px;
+  align-items: start;
+}
+
+.post-body {
+  width: 100%;
+  max-width: 680px;
+  margin: 0;
 }
 
 .post-body > * + * {
@@ -845,6 +944,68 @@ const formatDate = (date: string | null) => {
 .post-body strong {
   color: var(--ink);
   font-weight: 600;
+}
+
+
+/* =========================================================
+   TABLE OF CONTENTS
+   ========================================================= */
+
+.post-toc {
+  width: 100%;
+  position: sticky;
+  top: 110px;
+  align-self: start;
+}
+
+.toc-inner {
+  border-left: 1px solid var(--line);
+  padding-left: 20px;
+}
+
+.toc-label {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--hot);
+  margin-bottom: 14px;
+}
+
+.post-toc nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.toc-link {
+  display: block;
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 6px 0;
+  transition: color .15s ease, padding-left .15s ease;
+}
+
+.toc-link:hover {
+  color: var(--ink);
+  padding-left: 4px;
+}
+
+.toc-link.toc-h3 {
+  padding-left: 14px;
+  font-size: 10.5px;
+}
+
+.toc-link.toc-h3:hover {
+  padding-left: 18px;
+}
+
+.post-body h2,
+.post-body h3 {
+  scroll-margin-top: 110px;
 }
 
 
@@ -1175,7 +1336,7 @@ const formatDate = (date: string | null) => {
    ========================================================= */
 
 .post-back {
-  max-width: 680px;
+  max-width: 1040px;
   margin: 40px auto 64px;
 }
 
@@ -1405,6 +1566,23 @@ const formatDate = (date: string | null) => {
 /* =========================================================
    RESPONSIVE
    ========================================================= */
+
+@media (max-width: 1050px) {
+
+  .post-layout {
+    display: block;
+    max-width: 680px;
+  }
+
+  .post-toc {
+    display: none;
+  }
+
+  .post-body {
+    max-width: 680px;
+  }
+
+}
 
 @media (max-width: 920px) {
 
